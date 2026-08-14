@@ -1,0 +1,152 @@
+# Mensagens do AlkaRankUp. Suporta tags MiniMessage (<red>, <b>, etc).
+# Placeholders disponiveis por mensagem sao indicados nos comentarios.
+
+prefix: "<dark_gray>[<gold>AlkaRankUp</gold>]</dark_gray> "
+
+general:
+  player-only: "<red>Este comando so pode ser usado por jogadores."
+  no-permission: "<red>Voce nao tem permissao para usar este comando."
+  unknown-player: "<red>Jogador <white><name></white> nao encontrado."
+  unknown-rank: "<red>Rank invalido: <white><value></white>."
+  economy-unavailable: "<red>Sistema de economia indisponivel no momento - tente novamente em instantes."
+  requirements-unavailable: "<red>Um dos requisitos deste rank esta indisponivel no momento (ex: AlkaTime desligado) - tente novamente mais tarde."
+  cancelled: "<red>Operacao cancelada."
+
+rankup:
+  # placeholders: <rank>, <requirements> (lista formatada do que ainda falta)
+  max-rank: "<yellow>Voce ja esta no rank maximo! Use <white>/prestige</white> para continuar evoluindo."
+  insufficient-funds: "<red>Voce ainda precisa de: <white><requirements></white> para subir para <rank>."
+  # placeholders: <rank>
+  success: "<green>Parabens! Voce subiu para o rank <rank>!"
+  broadcast: "<gold><player> <yellow>subiu para o rank <rank>!"
+
+prestige:
+  not-max-rank: "<yellow>Voce precisa atingir o rank maximo antes de prestigiar."
+  insufficient-funds: "<red>Voce precisa de <white><cost></white> para prestigiar."
+  # placeholders: <prestige>
+  success: "<light_purple>Voce prestigiou! Agora voce esta no <b>Prestigio <prestige></b> e voltou ao rank inicial com vantagens permanentes."
+  broadcast: "<light_purple><player> alcancou o <b>Prestigio <prestige></b>!"
+  # placeholders: <level>
+  reward-claimed: "<light_purple>Voce resgatou a recompensa do Prestigio <level>!"
+  fly-disabled-globally: "<red>O voo de prestigio esta desativado neste servidor."
+  fly-locked: "<red>Voce precisa do Prestigio <white><level></white> pra voar."
+  fly-enabled: "<green>Voo ativado!"
+  fly-disabled: "<yellow>Voo desativado."
+
+gui:
+  back-name: "<red><b>Voltar</b>"
+  main-title: "<dark_gray><b>Rank - Principal</b></dark_gray>"
+  main-heads-name: "<green><b>Cabeças</b>"
+  main-heads-lore:
+    - "<gray>Veja e deposite as cabeças"
+    - "<gray>que voce coletou matando mobs."
+  main-ranks-name: "<gold><b>Ranks</b>"
+  main-ranks-lore:
+    - "<gray>Veja todos os ranks disponiveis"
+    - "<gray>e o progresso do rank atual."
+  main-profile-name: "<aqua><b>Perfil</b>"
+  main-profile-lore:
+    - "<gray>Veja o resumo do seu progresso."
+  main-top-name: "<yellow><b>TOP Jogadores</b>"
+  main-top-lore:
+    - "<gray>Veja o ranking dos jogadores"
+    - "<gray>com maior prestigio/rank."
+  main-rankup-name: "<green><b>Evoluir de Rank</b>"
+  main-rankup-lore:
+    - "<gray>Confirme sua evolucao pro"
+    - "<gray>proximo rank."
+  main-prestige-name: "<light_purple><b>Renascimento</b>"
+  main-prestige-lore:
+    - "<gray>Reinicie seu progresso de rank"
+    - "<gray>por uma vantagem permanente."
+  profile-title: "<dark_gray><b>Seu Perfil</b></dark_gray>"
+  profile-time-unavailable: "<gray>indisponivel"
+  profile-info-name: "<gold><b>Seu progresso</b>"
+  # placeholders: <rank>, <prestige>, <time>, <heads>
+  profile-info-lore:
+    - "<gray>Rank: <white><rank></white>"
+    - "<gray>Prestigio: <white><prestige></white>"
+    - "<gray>Tempo online: <white><time></white>"
+    - "<gray>Cabeças bancadas: <white><heads></white>"
+  rankup-confirm-title: "<dark_gray><b>Rank - Evoluir</b></dark_gray>"
+  heads-title: "<dark_gray><b>Rank - Cabeças</b></dark_gray>"
+  # placeholders: <amount>
+  heads-banked-lore:
+    - "<gray>Bancadas: <white><amount></white>"
+  heads-deposit-name: "<green><b>Depositar Tudo</b>"
+  heads-deposit-lore:
+    - "<gray>Deposita todas as cabecas"
+    - "<gray>que voce esta carregando."
+  top-title: "<dark_gray><b>Rank - TOP</b></dark_gray>"
+  # placeholders: <rank>, <prestige>
+  top-entry-lore:
+    - "<gray>Rank: <white><rank></white>"
+    - "<gray>Prestigio: <white><prestige></white>"
+  top-previous: "<gray>« Pagina anterior"
+  top-next: "<gray>Proxima pagina »"
+  locked-lore:
+    - "<gray>Bloqueado - suba os ranks anteriores primeiro."
+  current-lore:
+    - "<yellow>Seu rank atual."
+    - "<gray>Clique para ver os kits deste rank."
+  completed-lore:
+    - "<green>Rank ja conquistado."
+    - "<gray>Clique para ver os kits deste rank."
+  next-lore:
+    - "<white>Custo: <gold><cost></white>"
+    - "<gray>Clique para subir de rank."
+  prestige-ready-lore: "<light_purple>Clique para prestigiar!"
+  prestige-locked-lore: "<gray>Alcance o rank maximo para prestigiar."
+  prestige-confirm-info-name: "<light_purple><b>Tem certeza?</b>"
+  # placeholders: <cost>, <prestige>
+  prestige-confirm-info-lore:
+    - "<gray>Isso vai resetar seu progresso de"
+    - "<gray>rank de volta ao inicio."
+    - ""
+    - "<white>Custo: <gold><cost></white>"
+    - "<white>Novo Prestigio: <light_purple><prestige></white>"
+  prestige-confirm-yes: "<green><b>CONFIRMAR</b>"
+  prestige-confirm-no: "<red><b>CANCELAR</b>"
+  info-name: "<gold><b>Seu progresso</b>"
+  # placeholders: <rank>, <prestige>
+  info-lore:
+    - "<gray>Rank: <white><rank></white>"
+    - "<gray>Prestigio: <white><prestige></white>"
+  kit-available-lore:
+    - "<green>Disponivel!"
+    - "<gray>Clique para ver os itens."
+  # placeholders: <time>
+  kit-cooldown-lore:
+    - "<red>Em cooldown."
+    - "<gray>Disponivel em: <white><time></white>"
+  kit-claim-lore:
+    - "<green>Clique para resgatar os itens acima!"
+
+kits:
+  usage: "<red>Uso: /rankup kits [rank_id]"
+  locked-rank: "<red>Voce ainda nao desbloqueou este rank."
+  # placeholders: <time>
+  on-cooldown: "<red>Voce podera resgatar este kit novamente em <white><time></white>."
+  # placeholders: <kit>
+  claimed: "<green>Voce resgatou o <kit>!"
+
+admin:
+  usage: "<red>Uso: /rankup admin [setrank|setprestige|reload] [jogador] [valor]"
+  reload-success: "<green>Configuracao do AlkaRankUp recarregada."
+  # placeholders: <slots>, <ranks>
+  reload-slot-mismatch: "<yellow>Aviso: gui.rank-slots tem <white><slots></white> slot(s) mas existem <white><ranks></white> rank(s) configurado(s) - os ranks excedentes nao vao aparecer na GUI."
+  set-rank-success: "<green>Rank de <white><name></white> definido para <white><value></white>."
+  set-prestige-success: "<green>Prestigio de <white><name></white> definido para <white><value></white>."
+  invalid-rank: "<red>Rank invalido: <white><value></white>."
+  invalid-number: "<red>Valor invalido: <white><value></white>."
+
+heads:
+  # placeholders: <amount>
+  deposited: "<green>Voce depositou <white><amount></white> cabeça(s)!"
+  nothing-to-deposit: "<yellow>Voce nao esta carregando nenhuma cabeça pra depositar."
+
+top:
+  header: "<gold><b>--- Top Ranks ---</b></gold>"
+  # placeholders: <pos>, <name>, <rank>, <prestige>
+  line: "<gray><pos>. <white><name></white> <dark_gray>- <rank> <gray>(Prestigio <prestige>)"
+  empty: "<yellow>Ninguem rankeou ainda."

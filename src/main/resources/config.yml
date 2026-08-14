@@ -1,0 +1,960 @@
+# AlkaRankUp - configuracao principal
+#
+# Ranks: cada rank e uma entrada sob `ranks:`, com a chave sendo o proprio id do rank
+# (usado em /rankup admin setrank, /rankup kits e persistido no SQLite). A ORDEM dos
+# ranks e a ordem em que eles aparecem neste arquivo - nao ha campo de ordenacao.
+#
+# Requisitos do rankup: cada rank tem uma secao `requirements`, com uma chave por
+# moeda (qualquer id valido do AlkaEconomy, ex: coins/escarion/nacar/drakonio) e o
+# valor necessario - o jogador precisa cumprir TODOS ao mesmo tempo. A chave especial
+# "online_time" (em SEGUNDOS) exige tempo online, via AlkaTime - ver nota abaixo.
+# O rank inicial nunca cobra nada (todo jogador comeca nele automaticamente).
+# Sugestao: mantenha os valores crescendo de forma exponencial entre os ranks.
+#   requirements:
+#     coins: 30000000
+#     escarion: 20000
+#     nacar: 5000
+#     online_time: 288000   # 80h em segundos (80 * 3600)
+#
+# Currency invalida (id que nao existe no AlkaEconomy) cai em "coins" silenciosamente.
+# "online_time" so funciona com o AlkaTime instalado - sem ele, qualquer rank que exija
+# fica bloqueado com uma mensagem clara em vez de deixar ranquear de graca.
+#
+# Formato antigo (cost + currency, um so requisito) ainda funciona como fallback pra
+# config que nao foi atualizado - se "requirements" nao existir, usa cost+currency.
+#
+# LuckPerms: cada rank pode ter seu proprio `lp-group` (nome do grupo no LuckPerms) -
+# se omitido, usa o proprio id do rank. Ao ranquear, o grupo do rank ANTERIOR e
+# removido e o do novo e adicionado (nunca acumula) - controlado por
+# `luckperms.sync-groups` abaixo.
+#
+# Kits: cada rank pode ter ate 3 kits continuos (daily/weekly/monthly). Eles NAO sao
+# entregues automaticamente - o jogador abre o sub-menu de kits (clique num rank ja
+# desbloqueado no /rankup gui, ou /rankup kits <rank_id>), clica no kit desejado para
+# ver um PREVIEW dos itens, e so entao confirma o resgate dentro do preview.
+#
+# Os itens de cada kit sao montados nativamente pelo plugin via API do Bukkit
+# (ItemStack + addUnsafeEnchantment), NAO via comandos de console - isso evita
+# problemas de sintaxe NBT entre versoes do Minecraft e permite niveis de
+# encantamento acima do limite vanilla (ex: Protection 15), ja que o servidor roda
+# plugins que quebram esse teto.
+#
+# Icones: qualquer icone de GUI (ranks, kits, botoes de navegacao, itens de kit) pode
+# ser um objeto { material, custom_model_data, name } - `custom_model_data: 0` (ou
+# ausente) significa "nao aplicar", util para casar com resource packs customizados.
+
+economy:
+  # moeda padrao (id do AlkaEconomy) usada por qualquer rank sem `currency` proprio,
+  # e pelo custo de /prestige.
+  currency: "coins"
+  # custo para executar /prestige quando ja no rank maximo (0 = gratis), crescendo
+  # exponencialmente a cada prestigio: prestige-base-cost * prestige-cost-growth^nivel
+  prestige-base-cost: 0.0
+  prestige-cost-growth: 1.25
+
+luckperms:
+  # true = ao ranquear, troca o grupo do LuckPerms (Rank#lp-group, default = id do
+  # rank) - remove o do rank anterior, adiciona o do novo.
+  sync-groups: true
+
+# Beneficios de prestigio.
+perks:
+  # 0 = /rankup fly desativado pra todo mundo. N = liberado a partir do Prestigio N
+  # (inclusive) - ex: 1 = qualquer jogador com pelo menos 1 prestigio pode voar.
+  fly-from-prestige: 1
+  # bonus percentual na venda do AlkaShop por nivel de prestigio (precisa do AlkaShop
+  # com o hook do RankUp - ver com.alkacode.shop.hook.RankUpHook). 0.02 = +2% por
+  # prestigio (Prestigio 3 = +6%). 0 = sem bonus.
+  sell-bonus-per-prestige: 0.02
+
+# Recompensa UNICA por nivel de prestigio (cada nivel so pode ser resgatado uma vez,
+# ao contrario dos kits de rank que sao recorrentes) - acessivel via /prestige rewards.
+# Mesmo formato de item dos kits (ver items dentro de ranks.<id>.kits.<tipo>).
+prestige-rewards:
+  "1":
+    - material: DIAMOND_BLOCK
+      amount: 5
+      name: "<light_purple>Presente do Prestigio 1"
+  "2":
+    - material: NETHERITE_INGOT
+      amount: 3
+      name: "<light_purple>Presente do Prestigio 2"
+
+# Sistema de cabecas: matar um mob configurado tem chance de dropar uma cabeca
+# fisica (vai direto pro inventario), que o jogador precisa depositar no menu Heads
+# pra virar requisito de rankup - ver "head:<id>" nos requirements de um rank, ex:
+#   requirements:
+#     "head:zombie": 50
+heads:
+  enabled: true
+  give-directly-to-inventory: true
+  types:
+    ZOMBIE:
+      id: zombie
+      display-name: "<green>Cabeça de Zumbi"
+      material: ZOMBIE_HEAD
+      chance: 0.05
+    SKELETON:
+      id: skeleton
+      display-name: "<white>Cabeça de Esqueleto"
+      material: SKELETON_SKULL
+      chance: 0.05
+    WITHER_SKELETON:
+      id: wither_skeleton
+      display-name: "<dark_gray>Cabeça de Esqueleto Wither"
+      material: WITHER_SKELETON_SKULL
+      chance: 0.03
+    CREEPER:
+      id: creeper
+      display-name: "<dark_green>Cabeça de Creeper"
+      material: CREEPER_HEAD
+      chance: 0.04
+    PIG:
+      id: pig
+      display-name: "<light_purple>Cabeça de Porco"
+      # mob sem cabeca vanilla - cole aqui o valor Base64 da textura (sem isso cai
+      # no PLAYER_HEAD generico e loga aviso uma vez no startup).
+      texture: ""
+      chance: 0.08
+
+broadcast:
+  rankup: true
+  prestige: true
+
+# Feedback visual/sonoro pro proprio jogador ao subir de rank ou prestigiar (som +
+# particula no local dele + title/subtitle na tela). Deixe "sound"/"particle" vazio
+# ("") pra desativar so aquele efeito, sem desligar o resto.
+feedback:
+  rankup:
+    sound: "ENTITY_PLAYER_LEVELUP"
+    sound-volume: 1.0
+    sound-pitch: 1.0
+    particle: "TOTEM_OF_UNDYING"
+    particle-count: 30
+    title: "<gold><b>RANK UP!</b>"
+    # placeholders: <rank>
+    subtitle: "<white>Voce agora e <rank>"
+  prestige:
+    sound: "ENTITY_ENDER_DRAGON_GROWL"
+    sound-volume: 1.0
+    sound-pitch: 1.0
+    particle: "DRAGON_BREATH"
+    particle-count: 50
+    title: "<light_purple><b>PRESTIGIO!</b>"
+    # placeholders: <prestige>
+    subtitle: "<white>Voce alcancou o Prestigio <prestige>"
+
+# Configuracoes globais de GUI compartilhadas por todos os menus.
+gui_settings:
+  # true = fecha a GUI completamente apos resgatar um kit.
+  # false = fecha o preview e reabre o menu de kits daquele rank (para resgatar outro).
+  close_gui_on_claim: true
+
+  fill_empty_slots:
+    enabled: true
+    material: "BLACK_STAINED_GLASS_PANE"
+    name: " "
+    custom_model_data: 0
+
+  # usado no menu de kits (volta para o menu de ranks) e no preview (volta para o
+  # menu de kits do mesmo rank) - mesmo slot fisico nos dois, cada um com seu proprio
+  # inventario.
+  back_button:
+    material: "ARROW"
+    name: "<red>Voltar ao Menu Anterior"
+    slot: 27
+    custom_model_data: 0
+
+  # botao de acao do preview quando o kit esta disponivel.
+  claim_button:
+    material: "EMERALD_BLOCK"
+    name: "<green><b>Resgatar Recompensa</b>"
+    slot: 31
+    custom_model_data: 0
+
+  # mesmo slot do claim_button, exibido no lugar dele quando o kit esta em cooldown.
+  cooldown_button:
+    material: "BARRIER"
+    name: "<red><b>Em Cooldown</b>"
+    custom_model_data: 0
+
+gui:
+  title: "<dark_gray><b>Rank-Up</b></dark_gray>"
+  size: 54
+  # slots (na mesma ordem dos ranks declarados abaixo) onde cada icone de rank aparece
+  rank-slots: [19,20,21,22,23,24,25,28,29,30]
+  prestige-slot: 31
+  info-slot: 40
+
+  # sub-menu aberto ao clicar num rank ja desbloqueado (ou via /rankup kits <rank_id>)
+  # - so lista os 3 kits, o preview dos itens fica no gui.kit-preview abaixo.
+  kits-menu:
+    title: "<dark_gray><b>Kits - <rank></b></dark_gray>"
+    size: 36
+    daily-slot: 11
+    weekly-slot: 13
+    monthly-slot: 15
+
+  # inventario de preview aberto ao clicar num kit especifico - mostra os itens e o
+  # botao de acao (claim_button/cooldown_button, definidos em gui_settings acima).
+  kit-preview:
+    title: "<dark_gray><b><kit></b></dark_gray>"
+    size: 36
+    item-slots: [10,11,12,13,14,15,16]
+
+  # confirmacao aberta ao clicar no prestigio quando ja no rank maximo - prestigiar
+  # reseta TODO o progresso de rank, entao nao acontece direto no clique.
+  prestige-confirm:
+    title: "<light_purple><b>Confirmar Prestigio?</b></light_purple>"
+    size: 27
+    info-slot: 13
+    confirm-slot: 11
+    cancel-slot: 15
+
+# comandos de console EXTRAS executados a cada rank-up bem-sucedido (ex: dar item,
+# aplicar grupo do LuckPerms). Mesma ressalva do prestige.commands abaixo - nao coloque
+# "broadcast" aqui, o anuncio ja e feito por `broadcast.rankup`.
+# placeholders disponiveis: %player% e %rank%
+rankup:
+  commands: []
+
+# comandos de console EXTRAS executados a cada /prestige bem-sucedido (ex: dar item,
+# aplicar grupo do LuckPerms). NAO coloque um comando "broadcast" aqui - o anuncio ja
+# e feito pela mensagem `prestige.broadcast` (messages.yml), controlada pelo toggle
+# `broadcast.prestige` abaixo; um comando "broadcast" aqui duplicaria o aviso.
+# placeholders disponiveis: %player% e %prestige_level%
+prestige:
+  commands: []
+
+ranks:
+  iniciante:
+    display_name: "<gray><b>Iniciante</b></gray>"
+    icon:
+      material: "COAL"
+      custom_model_data: 0
+    requirements:
+      coins: 1000
+    kits:
+      daily:
+        name: "<green>Kit Diario Iniciante</green>"
+        cooldown: 86400
+        icon_available:
+          material: "CHEST"
+          custom_model_data: 0
+        icon_cooldown:
+          material: "MINECART"
+          custom_model_data: 0
+        items:
+          - material: "DIAMOND_CHESTPLATE"
+            amount: 1
+            name: "<gold>Peitoral do Iniciante</gold>"
+            lore:
+              - "<gray>Item especial do rank Iniciante"
+            custom_model_data: 1001
+            enchantments:
+              protection: 1
+              unbreaking: 1
+          - material: "DIAMOND_SWORD"
+            amount: 1
+            name: "<gold>Espada do Iniciante</gold>"
+            enchantments:
+              sharpness: 1
+      weekly:
+        name: "<aqua>Kit Semanal Iniciante</aqua>"
+        cooldown: 604800
+        icon_available:
+          material: "ENDER_CHEST"
+          custom_model_data: 0
+        icon_cooldown:
+          material: "MINECART"
+          custom_model_data: 0
+        items:
+          - material: "DIAMOND_CHESTPLATE"
+            amount: 1
+            name: "<gold>Peitoral do Iniciante</gold>"
+            enchantments:
+              protection: 3
+              unbreaking: 3
+          - material: "DIAMOND_SWORD"
+            amount: 1
+            name: "<gold>Espada do Iniciante</gold>"
+            enchantments:
+              sharpness: 3
+      monthly:
+        name: "<gold>Kit Mensal Iniciante</gold>"
+        cooldown: 2592000
+        icon_available:
+          material: "SHULKER_BOX"
+          custom_model_data: 0
+        icon_cooldown:
+          material: "MINECART"
+          custom_model_data: 0
+        items:
+          - material: "DIAMOND_CHESTPLATE"
+            amount: 1
+            name: "<gold>Peitoral do Iniciante</gold>"
+            enchantments:
+              protection: 5
+              unbreaking: 5
+          - material: "DIAMOND_SWORD"
+            amount: 1
+            name: "<gold>Espada do Iniciante</gold>"
+            enchantments:
+              sharpness: 5
+
+  explorador:
+    display_name: "<white><b>Explorador</b></white>"
+    icon:
+      material: "IRON_INGOT"
+      custom_model_data: 0
+    requirements:
+      coins: 5000
+    kits:
+      daily:
+        name: "<green>Kit Diario Explorador</green>"
+        cooldown: 86400
+        icon_available:
+          material: "CHEST"
+          custom_model_data: 0
+        icon_cooldown:
+          material: "MINECART"
+          custom_model_data: 0
+        items:
+          - material: "DIAMOND_CHESTPLATE"
+            amount: 1
+            name: "<gold>Peitoral do Explorador</gold>"
+            enchantments:
+              protection: 2
+              unbreaking: 2
+          - material: "DIAMOND_SWORD"
+            amount: 1
+            name: "<gold>Espada do Explorador</gold>"
+            enchantments:
+              sharpness: 2
+      weekly:
+        name: "<aqua>Kit Semanal Explorador</aqua>"
+        cooldown: 604800
+        icon_available:
+          material: "ENDER_CHEST"
+          custom_model_data: 0
+        icon_cooldown:
+          material: "MINECART"
+          custom_model_data: 0
+        items:
+          - material: "DIAMOND_CHESTPLATE"
+            amount: 1
+            name: "<gold>Peitoral do Explorador</gold>"
+            enchantments:
+              protection: 4
+              unbreaking: 4
+          - material: "DIAMOND_SWORD"
+            amount: 1
+            name: "<gold>Espada do Explorador</gold>"
+            enchantments:
+              sharpness: 4
+      monthly:
+        name: "<gold>Kit Mensal Explorador</gold>"
+        cooldown: 2592000
+        icon_available:
+          material: "SHULKER_BOX"
+          custom_model_data: 0
+        icon_cooldown:
+          material: "MINECART"
+          custom_model_data: 0
+        items:
+          - material: "DIAMOND_CHESTPLATE"
+            amount: 1
+            name: "<gold>Peitoral do Explorador</gold>"
+            enchantments:
+              protection: 6
+              unbreaking: 6
+          - material: "DIAMOND_SWORD"
+            amount: 1
+            name: "<gold>Espada do Explorador</gold>"
+            enchantments:
+              sharpness: 6
+
+  guerreiro:
+    display_name: "<yellow><b>Guerreiro</b></yellow>"
+    icon:
+      material: "GOLD_INGOT"
+      custom_model_data: 0
+    requirements:
+      coins: 15000
+    kits:
+      daily:
+        name: "<green>Kit Diario Guerreiro</green>"
+        cooldown: 86400
+        icon_available:
+          material: "CHEST"
+          custom_model_data: 0
+        icon_cooldown:
+          material: "MINECART"
+          custom_model_data: 0
+        items:
+          - material: "DIAMOND_CHESTPLATE"
+            amount: 1
+            name: "<gold>Peitoral do Guerreiro</gold>"
+            enchantments:
+              protection: 3
+              unbreaking: 3
+          - material: "DIAMOND_SWORD"
+            amount: 1
+            name: "<gold>Espada do Guerreiro</gold>"
+            enchantments:
+              sharpness: 3
+      weekly:
+        name: "<aqua>Kit Semanal Guerreiro</aqua>"
+        cooldown: 604800
+        icon_available:
+          material: "ENDER_CHEST"
+          custom_model_data: 0
+        icon_cooldown:
+          material: "MINECART"
+          custom_model_data: 0
+        items:
+          - material: "DIAMOND_CHESTPLATE"
+            amount: 1
+            name: "<gold>Peitoral do Guerreiro</gold>"
+            enchantments:
+              protection: 5
+              unbreaking: 5
+          - material: "DIAMOND_SWORD"
+            amount: 1
+            name: "<gold>Espada do Guerreiro</gold>"
+            enchantments:
+              sharpness: 5
+      monthly:
+        name: "<gold>Kit Mensal Guerreiro</gold>"
+        cooldown: 2592000
+        icon_available:
+          material: "SHULKER_BOX"
+          custom_model_data: 0
+        icon_cooldown:
+          material: "MINECART"
+          custom_model_data: 0
+        items:
+          - material: "DIAMOND_CHESTPLATE"
+            amount: 1
+            name: "<gold>Peitoral do Guerreiro</gold>"
+            enchantments:
+              protection: 7
+              unbreaking: 7
+          - material: "DIAMOND_SWORD"
+            amount: 1
+            name: "<gold>Espada do Guerreiro</gold>"
+            enchantments:
+              sharpness: 7
+
+  veterano:
+    display_name: "<blue><b>Veterano</b></blue>"
+    icon:
+      material: "LAPIS_LAZULI"
+      custom_model_data: 0
+    requirements:
+      coins: 40000
+    kits:
+      daily:
+        name: "<green>Kit Diario Veterano</green>"
+        cooldown: 86400
+        icon_available:
+          material: "CHEST"
+          custom_model_data: 0
+        icon_cooldown:
+          material: "MINECART"
+          custom_model_data: 0
+        items:
+          - material: "DIAMOND_CHESTPLATE"
+            amount: 1
+            name: "<gold>Peitoral do Veterano</gold>"
+            enchantments:
+              protection: 4
+              unbreaking: 4
+          - material: "DIAMOND_SWORD"
+            amount: 1
+            name: "<gold>Espada do Veterano</gold>"
+            enchantments:
+              sharpness: 4
+      weekly:
+        name: "<aqua>Kit Semanal Veterano</aqua>"
+        cooldown: 604800
+        icon_available:
+          material: "ENDER_CHEST"
+          custom_model_data: 0
+        icon_cooldown:
+          material: "MINECART"
+          custom_model_data: 0
+        items:
+          - material: "DIAMOND_CHESTPLATE"
+            amount: 1
+            name: "<gold>Peitoral do Veterano</gold>"
+            enchantments:
+              protection: 6
+              unbreaking: 6
+          - material: "DIAMOND_SWORD"
+            amount: 1
+            name: "<gold>Espada do Veterano</gold>"
+            enchantments:
+              sharpness: 6
+      monthly:
+        name: "<gold>Kit Mensal Veterano</gold>"
+        cooldown: 2592000
+        icon_available:
+          material: "SHULKER_BOX"
+          custom_model_data: 0
+        icon_cooldown:
+          material: "MINECART"
+          custom_model_data: 0
+        items:
+          - material: "DIAMOND_CHESTPLATE"
+            amount: 1
+            name: "<gold>Peitoral do Veterano</gold>"
+            enchantments:
+              protection: 8
+              unbreaking: 8
+          - material: "DIAMOND_SWORD"
+            amount: 1
+            name: "<gold>Espada do Veterano</gold>"
+            enchantments:
+              sharpness: 8
+
+  cavaleiro:
+    display_name: "<red><b>Cavaleiro</b></red>"
+    icon:
+      material: "REDSTONE"
+      custom_model_data: 0
+    requirements:
+      coins: 100000
+    kits:
+      daily:
+        name: "<green>Kit Diario Cavaleiro</green>"
+        cooldown: 86400
+        icon_available:
+          material: "CHEST"
+          custom_model_data: 0
+        icon_cooldown:
+          material: "MINECART"
+          custom_model_data: 0
+        items:
+          - material: "DIAMOND_CHESTPLATE"
+            amount: 1
+            name: "<gold>Peitoral do Cavaleiro</gold>"
+            enchantments:
+              protection: 5
+              unbreaking: 5
+          - material: "DIAMOND_SWORD"
+            amount: 1
+            name: "<gold>Espada do Cavaleiro</gold>"
+            enchantments:
+              sharpness: 5
+      weekly:
+        name: "<aqua>Kit Semanal Cavaleiro</aqua>"
+        cooldown: 604800
+        icon_available:
+          material: "ENDER_CHEST"
+          custom_model_data: 0
+        icon_cooldown:
+          material: "MINECART"
+          custom_model_data: 0
+        items:
+          - material: "DIAMOND_CHESTPLATE"
+            amount: 1
+            name: "<gold>Peitoral do Cavaleiro</gold>"
+            enchantments:
+              protection: 7
+              unbreaking: 7
+          - material: "DIAMOND_SWORD"
+            amount: 1
+            name: "<gold>Espada do Cavaleiro</gold>"
+            enchantments:
+              sharpness: 7
+      monthly:
+        name: "<gold>Kit Mensal Cavaleiro</gold>"
+        cooldown: 2592000
+        icon_available:
+          material: "SHULKER_BOX"
+          custom_model_data: 0
+        icon_cooldown:
+          material: "MINECART"
+          custom_model_data: 0
+        items:
+          - material: "DIAMOND_CHESTPLATE"
+            amount: 1
+            name: "<gold>Peitoral do Cavaleiro</gold>"
+            enchantments:
+              protection: 9
+              unbreaking: 9
+          - material: "DIAMOND_SWORD"
+            amount: 1
+            name: "<gold>Espada do Cavaleiro</gold>"
+            enchantments:
+              sharpness: 9
+
+  campeao:
+    display_name: "<green><b>Campeao</b></green>"
+    icon:
+      material: "EMERALD"
+      custom_model_data: 0
+    requirements:
+      coins: 250000
+    kits:
+      daily:
+        name: "<green>Kit Diario Campeao</green>"
+        cooldown: 86400
+        icon_available:
+          material: "CHEST"
+          custom_model_data: 0
+        icon_cooldown:
+          material: "MINECART"
+          custom_model_data: 0
+        items:
+          - material: "DIAMOND_CHESTPLATE"
+            amount: 1
+            name: "<gold>Peitoral do Campeao</gold>"
+            enchantments:
+              protection: 6
+              unbreaking: 6
+          - material: "DIAMOND_SWORD"
+            amount: 1
+            name: "<gold>Espada do Campeao</gold>"
+            enchantments:
+              sharpness: 6
+      weekly:
+        name: "<aqua>Kit Semanal Campeao</aqua>"
+        cooldown: 604800
+        icon_available:
+          material: "ENDER_CHEST"
+          custom_model_data: 0
+        icon_cooldown:
+          material: "MINECART"
+          custom_model_data: 0
+        items:
+          - material: "DIAMOND_CHESTPLATE"
+            amount: 1
+            name: "<gold>Peitoral do Campeao</gold>"
+            enchantments:
+              protection: 8
+              unbreaking: 8
+          - material: "DIAMOND_SWORD"
+            amount: 1
+            name: "<gold>Espada do Campeao</gold>"
+            enchantments:
+              sharpness: 8
+      monthly:
+        name: "<gold>Kit Mensal Campeao</gold>"
+        cooldown: 2592000
+        icon_available:
+          material: "SHULKER_BOX"
+          custom_model_data: 0
+        icon_cooldown:
+          material: "MINECART"
+          custom_model_data: 0
+        items:
+          - material: "DIAMOND_CHESTPLATE"
+            amount: 1
+            name: "<gold>Peitoral do Campeao</gold>"
+            enchantments:
+              protection: 10
+              unbreaking: 10
+          - material: "DIAMOND_SWORD"
+            amount: 1
+            name: "<gold>Espada do Campeao</gold>"
+            enchantments:
+              sharpness: 10
+
+  heroi:
+    display_name: "<aqua><b>Heroi</b></aqua>"
+    icon:
+      material: "DIAMOND"
+      custom_model_data: 0
+    requirements:
+      coins: 600000
+    kits:
+      daily:
+        name: "<green>Kit Diario Heroi</green>"
+        cooldown: 86400
+        icon_available:
+          material: "CHEST"
+          custom_model_data: 0
+        icon_cooldown:
+          material: "MINECART"
+          custom_model_data: 0
+        items:
+          - material: "DIAMOND_CHESTPLATE"
+            amount: 1
+            name: "<gold>Peitoral do Heroi</gold>"
+            enchantments:
+              protection: 7
+              unbreaking: 7
+          - material: "DIAMOND_SWORD"
+            amount: 1
+            name: "<gold>Espada do Heroi</gold>"
+            enchantments:
+              sharpness: 7
+      weekly:
+        name: "<aqua>Kit Semanal Heroi</aqua>"
+        cooldown: 604800
+        icon_available:
+          material: "ENDER_CHEST"
+          custom_model_data: 0
+        icon_cooldown:
+          material: "MINECART"
+          custom_model_data: 0
+        items:
+          - material: "DIAMOND_CHESTPLATE"
+            amount: 1
+            name: "<gold>Peitoral do Heroi</gold>"
+            enchantments:
+              protection: 9
+              unbreaking: 9
+          - material: "DIAMOND_SWORD"
+            amount: 1
+            name: "<gold>Espada do Heroi</gold>"
+            enchantments:
+              sharpness: 9
+      monthly:
+        name: "<gold>Kit Mensal Heroi</gold>"
+        cooldown: 2592000
+        icon_available:
+          material: "SHULKER_BOX"
+          custom_model_data: 0
+        icon_cooldown:
+          material: "MINECART"
+          custom_model_data: 0
+        items:
+          - material: "DIAMOND_CHESTPLATE"
+            amount: 1
+            name: "<gold>Peitoral do Heroi</gold>"
+            enchantments:
+              protection: 11
+              unbreaking: 11
+          - material: "DIAMOND_SWORD"
+            amount: 1
+            name: "<gold>Espada do Heroi</gold>"
+            enchantments:
+              sharpness: 11
+
+  mestre:
+    display_name: "<dark_purple><b>Mestre</b></dark_purple>"
+    icon:
+      material: "NETHERITE_INGOT"
+      custom_model_data: 0
+    # exemplo de requisito multi-moeda + tempo online (precisa do AlkaTime instalado
+    # pra "online_time" funcionar - sem ele, este rank fica bloqueado com aviso claro).
+    requirements:
+      coins: 30000000
+      escarion: 20000
+      nacar: 5000
+      online_time: 288000  # 80h * 3600
+    kits:
+      daily:
+        name: "<green>Kit Diario Mestre</green>"
+        cooldown: 86400
+        icon_available:
+          material: "CHEST"
+          custom_model_data: 0
+        icon_cooldown:
+          material: "MINECART"
+          custom_model_data: 0
+        items:
+          - material: "NETHERITE_CHESTPLATE"
+            amount: 1
+            name: "<gold>Peitoral do Mestre</gold>"
+            enchantments:
+              protection: 8
+              unbreaking: 8
+          - material: "NETHERITE_SWORD"
+            amount: 1
+            name: "<gold>Espada do Mestre</gold>"
+            enchantments:
+              sharpness: 8
+      weekly:
+        name: "<aqua>Kit Semanal Mestre</aqua>"
+        cooldown: 604800
+        icon_available:
+          material: "ENDER_CHEST"
+          custom_model_data: 0
+        icon_cooldown:
+          material: "MINECART"
+          custom_model_data: 0
+        items:
+          - material: "NETHERITE_CHESTPLATE"
+            amount: 1
+            name: "<gold>Peitoral do Mestre</gold>"
+            enchantments:
+              protection: 10
+              unbreaking: 10
+          - material: "NETHERITE_SWORD"
+            amount: 1
+            name: "<gold>Espada do Mestre</gold>"
+            enchantments:
+              sharpness: 10
+      monthly:
+        name: "<gold>Kit Mensal Mestre</gold>"
+        cooldown: 2592000
+        icon_available:
+          material: "SHULKER_BOX"
+          custom_model_data: 0
+        icon_cooldown:
+          material: "MINECART"
+          custom_model_data: 0
+        items:
+          - material: "NETHERITE_CHESTPLATE"
+            amount: 1
+            name: "<gold>Peitoral do Mestre</gold>"
+            enchantments:
+              protection: 12
+              unbreaking: 12
+          - material: "NETHERITE_SWORD"
+            amount: 1
+            name: "<gold>Espada do Mestre</gold>"
+            enchantments:
+              sharpness: 12
+
+  lenda:
+    display_name: "<gold><b>Lenda</b></gold>"
+    icon:
+      material: "NETHER_STAR"
+      custom_model_data: 0
+    requirements:
+      coins: 4000000
+    kits:
+      daily:
+        name: "<green>Kit Diario Lenda</green>"
+        cooldown: 86400
+        icon_available:
+          material: "CHEST"
+          custom_model_data: 0
+        icon_cooldown:
+          material: "MINECART"
+          custom_model_data: 0
+        items:
+          - material: "NETHERITE_CHESTPLATE"
+            amount: 1
+            name: "<gold>Peitoral da Lenda</gold>"
+            enchantments:
+              protection: 9
+              unbreaking: 9
+          - material: "NETHERITE_SWORD"
+            amount: 1
+            name: "<gold>Espada da Lenda</gold>"
+            enchantments:
+              sharpness: 9
+      weekly:
+        name: "<aqua>Kit Semanal Lenda</aqua>"
+        cooldown: 604800
+        icon_available:
+          material: "ENDER_CHEST"
+          custom_model_data: 0
+        icon_cooldown:
+          material: "MINECART"
+          custom_model_data: 0
+        items:
+          - material: "NETHERITE_CHESTPLATE"
+            amount: 1
+            name: "<gold>Peitoral da Lenda</gold>"
+            enchantments:
+              protection: 11
+              unbreaking: 11
+          - material: "NETHERITE_SWORD"
+            amount: 1
+            name: "<gold>Espada da Lenda</gold>"
+            enchantments:
+              sharpness: 11
+      monthly:
+        name: "<gold>Kit Mensal Lenda</gold>"
+        cooldown: 2592000
+        icon_available:
+          material: "SHULKER_BOX"
+          custom_model_data: 0
+        icon_cooldown:
+          material: "MINECART"
+          custom_model_data: 0
+        items:
+          - material: "NETHERITE_CHESTPLATE"
+            amount: 1
+            name: "<gold>Peitoral da Lenda</gold>"
+            enchantments:
+              protection: 13
+              unbreaking: 13
+          - material: "NETHERITE_SWORD"
+            amount: 1
+            name: "<gold>Espada da Lenda</gold>"
+            enchantments:
+              sharpness: 13
+
+  imortal:
+    display_name: "<light_purple><b>Imortal</b></light_purple>"
+    icon:
+      material: "BEACON"
+      custom_model_data: 0
+    requirements:
+      coins: 10000000
+    kits:
+      daily:
+        name: "<green>Kit Diario Imortal</green>"
+        cooldown: 86400
+        icon_available:
+          material: "CHEST"
+          custom_model_data: 0
+        icon_cooldown:
+          material: "MINECART"
+          custom_model_data: 0
+        items:
+          - material: "NETHERITE_CHESTPLATE"
+            amount: 1
+            name: "<gold>Peitoral do Imortal</gold>"
+            enchantments:
+              protection: 10
+              unbreaking: 10
+          - material: "NETHERITE_SWORD"
+            amount: 1
+            name: "<gold>Espada do Imortal</gold>"
+            enchantments:
+              sharpness: 10
+      weekly:
+        name: "<aqua>Kit Semanal Imortal</aqua>"
+        cooldown: 604800
+        icon_available:
+          material: "ENDER_CHEST"
+          custom_model_data: 0
+        icon_cooldown:
+          material: "MINECART"
+          custom_model_data: 0
+        items:
+          - material: "NETHERITE_CHESTPLATE"
+            amount: 1
+            name: "<gold>Peitoral do Imortal</gold>"
+            enchantments:
+              protection: 12
+              unbreaking: 12
+          - material: "NETHERITE_SWORD"
+            amount: 1
+            name: "<gold>Espada do Imortal</gold>"
+            enchantments:
+              sharpness: 12
+      monthly:
+        name: "<gold>Kit Mensal Imortal</gold>"
+        cooldown: 2592000
+        icon_available:
+          material: "SHULKER_BOX"
+          custom_model_data: 0
+        icon_cooldown:
+          material: "MINECART"
+          custom_model_data: 0
+        items:
+          - material: "NETHERITE_CHESTPLATE"
+            amount: 1
+            name: "<gold>Peitoral do Imortal</gold>"
+            lore:
+              - "<light_purple>O melhor equipamento do servidor!"
+            custom_model_data: 9010
+            enchantments:
+              protection: 15
+              unbreaking: 15
+          - material: "NETHERITE_SWORD"
+            amount: 1
+            name: "<gold>Espada do Imortal</gold>"
+            custom_model_data: 9011
+            enchantments:
+              sharpness: 15

@@ -1,0 +1,25 @@
+name: AlkaRankUp
+version: '${version}'
+main: com.alkacode.rankup.AlkaRankUpPlugin
+api-version: '1.21.8'
+author: MestreDEV
+description: Rank-up com progressao exponencial e sistema de prestigio.
+depend: [AlkaCore]
+softdepend: [PlaceholderAPI, AlkaEconomy, AlkaVips, AlkaShop, LuckPerms, AlkaTime]
+
+commands:
+  rankup:
+    description: Abre o menu de rank-up.
+    usage: /<command> [kits <rank_id>|top [quantidade]|admin <setrank|setprestige|reload>]
+    aliases: [ranks, rank, evoluir]
+  prestige:
+    description: Reinicia seu progresso no rank maximo por uma vantagem permanente.
+    usage: /<command> [rewards|fly]
+
+permissions:
+  alkarankup.use:
+    description: Permite usar /rankup e /prestige.
+    default: true
+  alkarankup.admin:
+    description: Permite comandos administrativos do AlkaRankUp.
+    default: op
