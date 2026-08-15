@@ -14,6 +14,7 @@ import com.alkacode.rankup.database.KitCooldownRepository;
 import com.alkacode.rankup.database.PrestigeRewardsRepository;
 import com.alkacode.rankup.database.RankDataRepository;
 import com.alkacode.rankup.economy.EconomyService;
+import com.alkacode.rankup.gui.RankListMenu;
 import com.alkacode.rankup.gui.RankUpServices;
 import com.alkacode.rankup.hook.AlkaVipsHook;
 import com.alkacode.rankup.hook.EconomyHook;
@@ -68,6 +69,7 @@ public final class AlkaRankUpPlugin extends JavaPlugin {
                         + "rank-up e prestigio ficam indisponiveis ate ele aparecer.");
             }
         });
+        com.alkacode.rankup.hook.ItemsAdderHook.tryHook(this);
         EconomyService economyService = new EconomyService(economyHookRef::get);
 
         RankDataRepository rankDataRepository = new RankDataRepository(api.getDatabase(), getLogger());
@@ -115,11 +117,10 @@ public final class AlkaRankUpPlugin extends JavaPlugin {
         AlkaRankUpAPI rankUpApi = new AlkaRankUpAPIProvider(playerDataManager, configManager);
         getServer().getServicesManager().register(AlkaRankUpAPI.class, rankUpApi, this, ServicePriority.Normal);
 
-        int slotCount = configManager.guiSection().getIntegerList("rank-slots").size();
         int rankCount = rankManager.ranks().size();
-        if (slotCount != rankCount) {
-            getLogger().warning("gui.rank-slots tem " + slotCount + " slot(s) mas existem " + rankCount
-                    + " rank(s) configurado(s) - os ranks excedentes nao vao aparecer na GUI.");
+        if (rankCount > RankListMenu.MAX_RANKS) {
+            getLogger().warning("Existem " + rankCount + " rank(s) configurado(s), mas a RankListMenu so tem "
+                    + RankListMenu.MAX_RANKS + " slot(s) - os ranks excedentes nao vao aparecer na GUI.");
         }
 
         getLogger().info("AlkaRankUp habilitado com " + rankManager.ranks().size() + " ranks.");

@@ -35,6 +35,9 @@ prestige:
 
 gui:
   back-name: "<red><b>Voltar</b>"
+  back-lore:
+    - "<gray>Clique para voltar ao menu anterior."
+  rank-list-title: "<dark_gray><b>Rank-Up</b></dark_gray>"
   main-title: "<dark_gray><b>Rank - Principal</b></dark_gray>"
   main-heads-name: "<green><b>Cabeças</b>"
   main-heads-lore:
@@ -61,14 +64,83 @@ gui:
     - "<gray>por uma vantagem permanente."
   profile-title: "<dark_gray><b>Seu Perfil</b></dark_gray>"
   profile-time-unavailable: "<gray>indisponivel"
-  profile-info-name: "<gold><b>Seu progresso</b>"
-  # placeholders: <rank>, <prestige>, <time>, <heads>
-  profile-info-lore:
-    - "<gray>Rank: <white><rank></white>"
-    - "<gray>Prestigio: <white><prestige></white>"
-    - "<gray>Tempo online: <white><time></white>"
-    - "<gray>Cabeças bancadas: <white><heads></white>"
+  # placeholders: <rank>
+  profile-rank-name: "<gold><b>Rank Atual</b>"
+  profile-rank-lore:
+    - ""
+    - "<white><rank></white>"
+  # placeholders: <next_rank>, <cost>, <progress>
+  profile-next-name: "<green><b>Próximo Rank</b>"
+  profile-next-lore:
+    - ""
+    - "<white><next_rank></white>"
+    - "<gray>Requisitos: <white><cost></white>"
+    - "<gray>Progresso: <progress>"
+    - ""
+    - "<gray>Abra o menu Rankup pra evoluir."
+  profile-maxrank-name: "<gold><b>Rank Máximo!</b>"
+  profile-maxrank-lore:
+    - ""
+    - "<gray>Você já alcançou o rank máximo."
+    - "<gray>Use o Renascimento pra continuar evoluindo."
+  # placeholders: <prestige>
+  profile-prestige-name: "<light_purple><b>Prestígio</b>"
+  profile-prestige-lore:
+    - ""
+    - "<white><prestige></white>"
+  # placeholders: <player>
+  profile-player-name: "<aqua><b><player></b>"
+  profile-player-lore:
+    - ""
+    - "<gray>Seu perfil no AlkaRankUp."
+  # placeholders: <time>
+  profile-time-name: "<yellow><b>Tempo Online</b>"
+  profile-time-lore:
+    - ""
+    - "<white><time></white>"
+  # placeholders: <heads>
+  profile-heads-name: "<green><b>Cabeças Bancadas</b>"
+  profile-heads-lore:
+    - ""
+    - "<white><heads></white>"
+    - ""
+    - "<gray>Abra o menu Cabeças pra ver por tipo."
+  # placeholders: <kits>
+  profile-kits-name: "<gold><b>Kits Disponíveis</b>"
+  profile-kits-lore:
+    - ""
+    - "<white><kits></white> <gray>kit(s) do seu rank atual"
+    - "<gray>disponíveis pra resgatar agora."
   rankup-confirm-title: "<dark_gray><b>Rank - Evoluir</b></dark_gray>"
+  # placeholders: <next_rank>
+  rankup-confirm-info-name: "<gold><b>Evoluir para <next_rank></b>"
+  # placeholders: <current_rank>, <next_rank>, <cost>, <progress>, <prestige>, <requirements>
+  rankup-confirm-info-lore:
+    - ""
+    - "<gray>Rank atual: <white><current_rank></white>"
+    - "<gray>Próximo rank: <white><next_rank></white>"
+    - ""
+    - "<gray>Requisitos: <white><cost></white>"
+    - "<gray>Progresso: <progress>"
+    - ""
+    - "<gray>Falta: <white><requirements></white>"
+    - ""
+    - "<gray>Prestígio atual: <white><prestige></white>"
+  rankup-confirm-requirements-met: "<green>Tudo pronto - pode confirmar!"
+  # placeholders: <next_rank>
+  rankup-confirm-yes-name: "<green><b>CONFIRMAR</b>"
+  rankup-confirm-yes-lore:
+    - ""
+    - "<gray>Evoluir para <white><next_rank></white>."
+  rankup-confirm-no-name: "<red><b>CANCELAR</b>"
+  rankup-confirm-no-lore:
+    - ""
+    - "<gray>Voltar sem evoluir."
+  rankup-max-rank-lore:
+    - ""
+    - "<gray>Voce ja esta no rank maximo!"
+    - "<gray>Use o menu de <light_purple>Renascimento</light_purple>"
+    - "<gray>para continuar evoluindo."
   heads-title: "<dark_gray><b>Rank - Cabeças</b></dark_gray>"
   # placeholders: <amount>
   heads-banked-lore:
@@ -84,6 +156,31 @@ gui:
     - "<gray>Prestigio: <white><prestige></white>"
   top-previous: "<gray>« Pagina anterior"
   top-next: "<gray>Proxima pagina »"
+  # RankListMenu (grade de ranks) - lore rica por estado, chaves aninhadas pra nao colidir
+  # com as chaves flat abaixo (legado, mantidas por compatibilidade).
+  rank-list:
+    completed-lore:
+      - ""
+      - "<green>Rank já conquistado."
+      - "<gray>Clique para ver os kits deste rank."
+    # placeholders: <kits_available>
+    current-lore:
+      - ""
+      - "<yellow>Este é o seu rank atual."
+      - "<gray>Kits disponíveis agora: <white><kits_available></white>"
+      - "<gray>Clique para ver os kits."
+    # placeholders: <cost>, <progress>
+    next-lore:
+      - ""
+      - "<white>Requisitos: <gold><cost></white>"
+      - "<gray>Progresso: <progress>"
+      - ""
+      - "<gray>Clique para evoluir."
+    # placeholders: <required_rank>
+    locked-lore:
+      - ""
+      - "<gray>Bloqueado - complete <white><required_rank></white>"
+      - "<gray>primeiro."
   locked-lore:
     - "<gray>Bloqueado - suba os ranks anteriores primeiro."
   current-lore:
@@ -98,13 +195,25 @@ gui:
   prestige-ready-lore: "<light_purple>Clique para prestigiar!"
   prestige-locked-lore: "<gray>Alcance o rank maximo para prestigiar."
   prestige-confirm-info-name: "<light_purple><b>Tem certeza?</b>"
-  # placeholders: <cost>, <prestige>
+  # placeholders: <cost>, <prestige>, <current_prestige>, <sell_bonus_current>, <sell_bonus_next>, <fly_status>, <reward>
   prestige-confirm-info-lore:
     - "<gray>Isso vai resetar seu progresso de"
     - "<gray>rank de volta ao inicio."
     - ""
     - "<white>Custo: <gold><cost></white>"
-    - "<white>Novo Prestigio: <light_purple><prestige></white>"
+    - "<white>Prestígio atual: <light_purple><current_prestige></white>"
+    - "<white>Novo Prestígio: <light_purple><prestige></white>"
+    - ""
+    - "<white>Bônus de venda atual: <green>+<sell_bonus_current>%</white>"
+    - "<white>Bônus de venda após: <green>+<sell_bonus_next>%</white>"
+    - "<white>Voo: <fly_status>"
+    - "<white>Recompensa: <reward>"
+  prestige-confirm-fly-disabled: "<gray>desativado no servidor"
+  prestige-confirm-fly-unlocked: "<green>liberado"
+  # placeholders: <level>
+  prestige-confirm-fly-locked: "<yellow>libera no Prestígio <level>"
+  prestige-confirm-reward-yes: "<green>sim, disponível pra resgatar!"
+  prestige-confirm-reward-no: "<gray>nenhuma configurada pra este nível"
   prestige-confirm-yes: "<green><b>CONFIRMAR</b>"
   prestige-confirm-no: "<red><b>CANCELAR</b>"
   info-name: "<gold><b>Seu progresso</b>"
@@ -134,7 +243,7 @@ admin:
   usage: "<red>Uso: /rankup admin [setrank|setprestige|reload] [jogador] [valor]"
   reload-success: "<green>Configuracao do AlkaRankUp recarregada."
   # placeholders: <slots>, <ranks>
-  reload-slot-mismatch: "<yellow>Aviso: gui.rank-slots tem <white><slots></white> slot(s) mas existem <white><ranks></white> rank(s) configurado(s) - os ranks excedentes nao vao aparecer na GUI."
+  reload-slot-mismatch: "<yellow>Aviso: a RankListMenu so tem <white><slots></white> slot(s) mas existem <white><ranks></white> rank(s) configurado(s) - os ranks excedentes nao vao aparecer na GUI."
   set-rank-success: "<green>Rank de <white><name></white> definido para <white><value></white>."
   set-prestige-success: "<green>Prestigio de <white><name></white> definido para <white><value></white>."
   invalid-rank: "<red>Rank invalido: <white><value></white>."

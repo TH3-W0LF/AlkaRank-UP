@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.alkacode"
-version = "1.0.16"
+version = "1.0.18"
 
 java {
     toolchain {
@@ -33,6 +33,9 @@ dependencies {
     compileOnly("com.alkacode:AlkaCore:1.0.2")
     compileOnly("com.alkacode:AlkaEconomy:1.0.5")
     compileOnly("me.clip:placeholderapi:2.11.6")
+    // icone de rank opcional via item/bloco custom do ItemsAdder - mesma versao/padrao
+    // ja usado em plugins/AlkaMines (nao existe tag 3.6.4 publicada no jitpack).
+    compileOnly("com.github.LoneDev6:API-ItemsAdder:3.6.1")
 }
 
 tasks.withType<JavaCompile> {

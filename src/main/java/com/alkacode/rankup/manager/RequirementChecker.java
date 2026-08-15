@@ -109,6 +109,33 @@ public final class RequirementChecker {
         }
     }
 
+    /** % geral de progresso (0-100), somando min(have,need)/need de cada requisito - usado pra
+     * barra de progresso na GUI. Requisito com a fonte indisponivel conta como 0% daquele item
+     * (nao trava em 100% so porque a fonte caiu). */
+    public int progressPercent(Player player, Map<String, Double> requirements) {
+        if (requirements.isEmpty()) {
+            return 100;
+        }
+        double haveSum = 0;
+        double needSum = 0;
+        for (Map.Entry<String, Double> entry : requirements.entrySet()) {
+            String key = entry.getKey();
+            double need = entry.getValue();
+            double have;
+            if (ONLINE_TIME_KEY.equalsIgnoreCase(key)) {
+                TimeHook hook = timeHookSupplier.get();
+                have = hook != null ? Math.max(0, hook.getOnlineSeconds(player.getUniqueId())) : 0;
+            } else if (key.startsWith(HEAD_PREFIX)) {
+                have = headsManager.get(player.getUniqueId(), key.substring(HEAD_PREFIX.length()));
+            } else {
+                have = economyService.isAvailable() ? economyService.getBalance(player, key) : 0;
+            }
+            haveSum += Math.min(have, need);
+            needSum += need;
+        }
+        return needSum <= 0 ? 100 : (int) Math.round((haveSum / needSum) * 100);
+    }
+
     /** "30.000.000 coins, 20.000 escarion, 80h online, 50 head:zombie" - pra lore da GUI e mensagens. */
     public String formatSummary(Map<String, Double> requirements) {
         List<String> parts = new ArrayList<>();

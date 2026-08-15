@@ -226,6 +226,17 @@ rankup:
 prestige:
   commands: []
 
+# A ORDEM dos ranks e a ordem em que eles aparecem aqui embaixo (tanto pra progressao
+# quanto pra grade visual do menu Ranks) - pra reordenar, so mover o bloco do rank pra
+# outra posicao neste arquivo.
+#
+# icon: aceita 3 fontes, com prioridade itemsadder > texture > material (a primeira
+# que existir/estiver disponivel e usada, sem quebrar se a fonte escolhida faltar):
+#   material: NOME_DO_MATERIAL vanilla (sempre funciona, e o padrao)
+#   texture: "<base64>" - cabeca (PLAYER_HEAD) com skin custom, cole o valor Base64
+#            da textura aqui (funciona sem plugin nenhum extra instalado)
+#   itemsadder: "namespace:id" - item/bloco custom do ItemsAdder (precisa do
+#            ItemsAdder instalado; sem ele, cai pro texture/material normalmente)
 ranks:
   iniciante:
     display_name: "<gray><b>Iniciante</b></gray>"

@@ -5,7 +5,7 @@ api-version: '1.21.8'
 author: MestreDEV
 description: Rank-up com progressao exponencial e sistema de prestigio.
 depend: [AlkaCore]
-softdepend: [PlaceholderAPI, AlkaEconomy, AlkaVips, AlkaShop, LuckPerms, AlkaTime]
+softdepend: [PlaceholderAPI, AlkaEconomy, AlkaVips, AlkaShop, LuckPerms, AlkaTime, ItemsAdder]
 
 commands:
   rankup:

@@ -42,13 +42,20 @@ public final class PrestigeConfirmMenu extends BaseGui {
 
         PlayerRankData data = services.playerDataManager.get(player.getUniqueId());
         double cost = services.prestigeManager.previewCost(player);
+        int nextPrestige = data.prestigeLevel() + 1;
+        double bonusPerLevel = services.configManager.sellBonusPerPrestige();
 
         int infoSlot = section.getInt("info-slot", -1);
         if (infoSlot >= 0) {
             setItem(infoSlot, createItem(Material.NETHER_STAR, services.configManager.rawMessage("gui.prestige-confirm-info-name"),
                     services.configManager.rawMessageList("gui.prestige-confirm-info-lore").stream()
                             .map(line -> line.replace("<cost>", String.valueOf(Math.round(cost)))
-                                    .replace("<prestige>", String.valueOf(data.prestigeLevel() + 1)))
+                                    .replace("<prestige>", String.valueOf(nextPrestige))
+                                    .replace("<current_prestige>", String.valueOf(data.prestigeLevel()))
+                                    .replace("<sell_bonus_current>", String.format("%.0f", bonusPerLevel * data.prestigeLevel() * 100))
+                                    .replace("<sell_bonus_next>", String.format("%.0f", bonusPerLevel * nextPrestige * 100))
+                                    .replace("<fly_status>", flyStatus(nextPrestige))
+                                    .replace("<reward>", rewardSummary(nextPrestige)))
                             .toArray(String[]::new)));
         }
 
@@ -63,6 +70,22 @@ public final class PrestigeConfirmMenu extends BaseGui {
             setItem(cancelSlot, createItem(Material.RED_WOOL, services.configManager.rawMessage("gui.prestige-confirm-no")),
                     e -> new RankMainMenu(player, services).open());
         }
+    }
+
+    private String flyStatus(int nextPrestige) {
+        int required = services.configManager.flyFromPrestige();
+        if (required <= 0) {
+            return services.configManager.rawMessage("gui.prestige-confirm-fly-disabled");
+        }
+        if (nextPrestige >= required) {
+            return services.configManager.rawMessage("gui.prestige-confirm-fly-unlocked");
+        }
+        return services.configManager.rawMessage("gui.prestige-confirm-fly-locked").replace("<level>", String.valueOf(required));
+    }
+
+    private String rewardSummary(int nextPrestige) {
+        boolean hasReward = !services.configManager.prestigeRewardItems(nextPrestige).isEmpty();
+        return services.configManager.rawMessage(hasReward ? "gui.prestige-confirm-reward-yes" : "gui.prestige-confirm-reward-no");
     }
 
     private void confirm() {

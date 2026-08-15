@@ -1,6 +1,7 @@
 package com.alkacode.rankup.command;
 
 import com.alkacode.rankup.gui.KitMenu;
+import com.alkacode.rankup.gui.RankListMenu;
 import com.alkacode.rankup.gui.RankMainMenu;
 import com.alkacode.rankup.gui.RankUpServices;
 import com.alkacode.rankup.manager.RankManager;
@@ -123,11 +124,10 @@ public final class RankUpCommand implements CommandExecutor {
             rankManager.reload(services.configManager.ranks());
             services.messages.send(sender, "admin.reload-success");
 
-            int slotCount = services.configManager.guiSection().getIntegerList("rank-slots").size();
             int rankCount = rankManager.ranks().size();
-            if (slotCount != rankCount) {
+            if (rankCount > RankListMenu.MAX_RANKS) {
                 services.messages.send(sender, "admin.reload-slot-mismatch", Map.of(
-                        "slots", String.valueOf(slotCount), "ranks", String.valueOf(rankCount)));
+                        "slots", String.valueOf(RankListMenu.MAX_RANKS), "ranks", String.valueOf(rankCount)));
             }
             return;
         }

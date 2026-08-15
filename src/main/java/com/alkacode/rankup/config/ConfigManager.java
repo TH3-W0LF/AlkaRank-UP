@@ -274,6 +274,13 @@ public final class ConfigManager {
      * `name` e opcional - fica nulo quando o icone nao carrega nome proprio (ex: icone
      * de rank, cujo nome ja vem de um campo separado).
      */
+    /**
+     * {@code texture} (Base64) e {@code itemsadder} (namespace, ex: "alkarankup:rank_1")
+     * sao opcionais - quando presentes tem prioridade sobre {@code material} na hora de
+     * montar o ItemStack (ver IconFactory#buildBase). Nao exigem plugin nenhum instalado
+     * pra CONFIGURAR (so pra RENDERIZAR: sem ItemsAdder instalado, itemsadder cai pro
+     * material vanilla; texture sempre funciona, e so um PLAYER_HEAD com skin custom).
+     */
     private IconConfig parseIcon(ConfigurationSection section, Material fallbackMaterial) {
         if (section == null) {
             return new IconConfig(fallbackMaterial, 0, null);
@@ -284,7 +291,9 @@ public final class ConfigManager {
         }
         int customModelData = section.getInt("custom_model_data", 0);
         String name = section.getString("name", null);
-        return new IconConfig(material, customModelData, name);
+        String texture = section.getString("texture", null);
+        String itemsAdderId = section.getString("itemsadder", null);
+        return new IconConfig(material, customModelData, name, texture, itemsAdderId);
     }
 
     private Map<Enchantment, Integer> parseEnchantments(Object rawEnchantments) {

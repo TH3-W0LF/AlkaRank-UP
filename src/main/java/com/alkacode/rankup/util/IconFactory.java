@@ -1,5 +1,7 @@
 package com.alkacode.rankup.util;
 
+import com.alkacode.core.util.ItemBuilder;
+import com.alkacode.rankup.hook.ItemsAdderHook;
 import com.alkacode.rankup.model.IconConfig;
 import net.kyori.adventure.text.Component;
 import org.bukkit.inventory.ItemStack;
@@ -24,7 +26,7 @@ public final class IconFactory {
      *                            {@link IconConfig#displayName()}.
      */
     public static ItemStack build(IconConfig icon, String displayNameOverride, List<Component> lore) {
-        ItemStack item = new ItemStack(icon.material());
+        ItemStack item = buildBase(icon);
         ItemMeta meta = item.getItemMeta();
 
         String name = displayNameOverride != null ? displayNameOverride : icon.displayName();
@@ -34,10 +36,31 @@ public final class IconFactory {
         if (!lore.isEmpty()) {
             meta.lore(lore);
         }
-        applyCustomModelData(meta, icon.customModelData());
+        if (!icon.hasItemsAdderId()) {
+            // custom_model_data so faz sentido pra item vanilla - um item do ItemsAdder ja
+            // vem com o proprio model data, sobrescrever quebraria a textura/modelo custom dele.
+            applyCustomModelData(meta, icon.customModelData());
+        }
 
         item.setItemMeta(meta);
         return item;
+    }
+
+    /** Resolve o ItemStack BASE (sem nome/lore proprios ainda) - prioridade: item/bloco
+     * custom do ItemsAdder (se configurado e o plugin estiver presente) > cabeca com
+     * textura Base64 > Material vanilla configurado. Nunca lanca - qualquer fonte
+     * ausente/indisponivel cai pra proxima da lista. */
+    private static ItemStack buildBase(IconConfig icon) {
+        if (icon.hasItemsAdderId() && ItemsAdderHook.isEnabled()) {
+            ItemStack custom = ItemsAdderHook.getCustomItem(icon.itemsAdderId());
+            if (custom != null) {
+                return custom;
+            }
+        }
+        if (icon.hasTexture()) {
+            return ItemBuilder.skullFromTexture(icon.texture());
+        }
+        return new ItemStack(icon.material());
     }
 
     /**
