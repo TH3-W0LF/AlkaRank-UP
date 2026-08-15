@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.alkacode"
-version = "1.0.18"
+version = "1.0.19"
 
 java {
     toolchain {
@@ -30,7 +30,7 @@ dependencies {
     // (publicado via `./gradlew publishToMavenLocal` no projeto AlkaEconomy). AlkaCore
     // e necessario tambem porque AlkaEconomyPlugin agora estende
     // com.alkacode.core.plugin.AlkaPlugin (o javac precisa da hierarquia completa).
-    compileOnly("com.alkacode:AlkaCore:1.0.2")
+    compileOnly("com.alkacode:AlkaCore:1.0.3")
     compileOnly("com.alkacode:AlkaEconomy:1.0.5")
     compileOnly("me.clip:placeholderapi:2.11.6")
     // icone de rank opcional via item/bloco custom do ItemsAdder - mesma versao/padrao

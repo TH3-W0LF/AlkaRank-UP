@@ -89,10 +89,12 @@ public final class AlkaRankUpPlugin extends JavaPlugin {
         PrestigeManager prestigeManager = new PrestigeManager(rankManager, playerDataManager, economyService, configManager);
 
         HeadDropListener headDropListener = new HeadDropListener(this, configManager);
+        com.alkacode.core.util.PermissionNamesStore permissionNames =
+                new com.alkacode.core.util.PermissionNamesStore(this, "permission-names.yml");
 
         RankUpServices services = new RankUpServices(this, rankManager, playerDataManager, kitCooldownManager,
                 headsManager, rankUpService, prestigeManager, requirementChecker, configManager, messages,
-                headDropListener.headIdKey(), timeHookRef::get, prestigeRewardsRepository);
+                headDropListener.headIdKey(), timeHookRef::get, prestigeRewardsRepository, permissionNames);
 
         getCommand("rankup").setExecutor(new RankUpCommand(services));
         getCommand("rankup").setTabCompleter(new RankUpTabCompleter(rankManager));

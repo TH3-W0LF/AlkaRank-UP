@@ -168,12 +168,19 @@ gui:
       - ""
       - "<yellow>Este é o seu rank atual."
       - "<gray>Kits disponíveis agora: <white><kits_available></white>"
+      - ""
+      - "<#55AAFF>Permissões deste rank"
+      - "<permissions>"
+      - ""
       - "<gray>Clique para ver os kits."
     # placeholders: <cost>, <progress>
     next-lore:
       - ""
       - "<white>Requisitos: <gold><cost></white>"
       - "<gray>Progresso: <progress>"
+      - ""
+      - "<#55AAFF>Permissões ao evoluir"
+      - "<permissions>"
       - ""
       - "<gray>Clique para evoluir."
     # placeholders: <required_rank>

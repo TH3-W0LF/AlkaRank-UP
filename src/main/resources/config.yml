@@ -80,6 +80,13 @@ prestige-rewards:
       amount: 3
       name: "<light_purple>Presente do Prestigio 2"
 
+# Lore "permissoes deste rank" (linha marcadora "<permissions>" em qualquer lore do
+# messages.yml/gui.rank-list.* - vira uma linha por permissao do grupo do LuckPerms do
+# rank, ver Rank#lpGroup() no config.yml em "ranks"). Nomes amigaveis ficam em
+# permission-names.yml (gerado/editavel automaticamente).
+permission-lore:
+  line-format: ' <gray>- <white>%permission%'
+
 # Sistema de cabecas: matar um mob configurado tem chance de dropar uma cabeca
 # fisica (vai direto pro inventario), que o jogador precisa depositar no menu Heads
 # pra virar requisito de rankup - ver "head:<id>" nos requirements de um rank, ex:

@@ -121,6 +121,7 @@ public final class RankUpCommand implements CommandExecutor {
         RankManager rankManager = services.rankManager;
         if (args.length >= 2 && args[1].equalsIgnoreCase("reload")) {
             services.configManager.reload();
+            services.permissionNames.reload();
             rankManager.reload(services.configManager.ranks());
             services.messages.send(sender, "admin.reload-success");
 

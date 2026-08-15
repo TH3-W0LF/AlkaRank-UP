@@ -100,7 +100,8 @@ public final class RankListMenu extends BaseGui {
         ItemStack item = com.alkacode.rankup.util.IconFactory.build(rank.icon(), null, List.of());
         ItemMeta meta = item.getItemMeta();
         meta.displayName(TextUtil.parse(rank.displayName()));
-        meta.lore(replacePlaceholders(loreLines, placeholders));
+        Map<String, List<String>> expansions = Map.of("<permissions>", services.permissionLoreLines(rank.lpGroup()));
+        meta.lore(replacePlaceholders(loreLines, placeholders, expansions));
         item.setItemMeta(meta);
         return item;
     }
@@ -132,8 +133,23 @@ public final class RankListMenu extends BaseGui {
     /** Substitui <chave> pelo valor ANTES de mandar pro MiniMessage - RequirementChecker#formatSummary
      * ja pode devolver texto cru (nao MiniMessage), entao a ordem importa: placeholder primeiro. */
     static List<Component> replacePlaceholders(List<String> lines, Map<String, String> placeholders) {
+        return replacePlaceholders(lines, placeholders, Map.of());
+    }
+
+    /** @param lineExpansions linha marcadora (ex: "<permissions>") -> lista de linhas ja
+     *  resolvidas que a substituem - permite 1 linha no messages.yml virar N linhas (ver
+     *  RankUpServices#permissionLoreLines). Linha comparada com trim(), sem placeholder. */
+    static List<Component> replacePlaceholders(List<String> lines, Map<String, String> placeholders,
+                                                 Map<String, List<String>> lineExpansions) {
         List<Component> result = new ArrayList<>();
         for (String line : lines) {
+            List<String> expansion = lineExpansions.get(line.trim());
+            if (expansion != null) {
+                for (String expandedLine : expansion) {
+                    result.add(TextUtil.parse(expandedLine));
+                }
+                continue;
+            }
             String resolved = line;
             for (Map.Entry<String, String> entry : placeholders.entrySet()) {
                 resolved = resolved.replace(entry.getKey(), entry.getValue());

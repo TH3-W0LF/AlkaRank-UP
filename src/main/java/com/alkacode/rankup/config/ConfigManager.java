@@ -460,6 +460,12 @@ public final class ConfigManager {
         return messages;
     }
 
+    /** Formato de cada linha de "permissoes deste rank" (marcador "<permissions>" na lore -
+     * ver RankUpServices#permissionLoreLines/PermissionLoreUtil no AlkaCore). */
+    public String permissionLoreLineFormat() {
+        return config.getString("permission-lore.line-format", " <gray>- <white>%permission%");
+    }
+
     public String rawMessage(String path) {
         String value = messages.getString(path);
         return value == null ? path : value;

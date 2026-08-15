@@ -32,12 +32,14 @@ public final class RankUpServices {
     public final NamespacedKey headIdKey;
     public final Supplier<TimeHook> timeHookSupplier;
     public final PrestigeRewardsRepository prestigeRewardsRepository;
+    public final com.alkacode.core.util.PermissionNamesStore permissionNames;
 
     public RankUpServices(JavaPlugin plugin, RankManager rankManager, PlayerDataManager playerDataManager,
                            KitCooldownManager kitCooldownManager, HeadsManager headsManager, RankUpService rankUpService,
                            PrestigeManager prestigeManager, RequirementChecker requirementChecker,
                            ConfigManager configManager, Messages messages, NamespacedKey headIdKey,
-                           Supplier<TimeHook> timeHookSupplier, PrestigeRewardsRepository prestigeRewardsRepository) {
+                           Supplier<TimeHook> timeHookSupplier, PrestigeRewardsRepository prestigeRewardsRepository,
+                           com.alkacode.core.util.PermissionNamesStore permissionNames) {
         this.plugin = plugin;
         this.rankManager = rankManager;
         this.playerDataManager = playerDataManager;
@@ -51,5 +53,17 @@ public final class RankUpServices {
         this.headIdKey = headIdKey;
         this.timeHookSupplier = timeHookSupplier;
         this.prestigeRewardsRepository = prestigeRewardsRepository;
+        this.permissionNames = permissionNames;
+    }
+
+    /** Linhas de lore "permissoes deste rank" ja resolvidas com nomes amigaveis - vazio se
+     * o rank nao tem lpGroup configurado. Ver com.alkacode.rankup.model.Rank#lpGroup(). */
+    public java.util.List<String> permissionLoreLines(String lpGroup) {
+        if (lpGroup == null || lpGroup.isBlank()) {
+            return java.util.List.of();
+        }
+        java.util.List<String> keys = com.alkacode.core.hooks.LuckPermsHook.getGroupPermissionKeys(lpGroup);
+        return com.alkacode.core.util.PermissionLoreUtil.expand(keys, configManager.permissionLoreLineFormat(),
+                permissionNames::lookup, permissionNames::registerUnknown);
     }
 }
