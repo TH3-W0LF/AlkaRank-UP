@@ -1,80 +1,102 @@
+<div align="center">
+
 # AlkaRankUp
 
-Rank-up com progressão exponencial, prestígio e minério "cabeças" para a rede
-AlkaStudio (Paper 1.21.8 / Java 21) — construído sobre o AlkaCore.
+### Rank-up com progressão exponencial e prestígio
 
-## O que faz
+Ranks com requisitos multi-tipo, prestígio com vantagens permanentes e um
+sistema de "cabeças" colecionáveis — construído sobre o AlkaCore, para a
+rede AlkaStudio.
 
-- **Ranks com requisitos multi-tipo** — cada rank exige uma combinação de
-  moedas do AlkaEconomy (`coins`, `escarion`, etc), tempo online (via
-  AlkaTime) e/ou `head:<id>` (ver Cabeças abaixo), todos precisam estar
-  satisfeitos ao mesmo tempo. Motor único (`RequirementChecker`) usado tanto
-  pra checar/cobrar quanto pra exibir o que falta na GUI.
-- **Prestígio** — reseta o rank pro inicial em troca de uma vantagem
-  permanente: troca de grupo do LuckPerms (`lp-group` por rank), kit por
-  rank (diário/semanal/mensal, cooldown próprio), recompensas ÚNICAS por
-  nível de prestígio (resgatáveis uma vez só), `/prestige fly` liberado a
-  partir de um nível configurável, e bônus de venda (`sell-bonus-per-prestige`)
-  consumido pelo AlkaShop via `AlkaRankUpAPI`.
-- **Cabeças** — matar um mob configurado (`heads.types.*`) tem chance de
-  dropar uma cabeça física (material vanilla quando existe — Zumbi/
-  Esqueleto/Esqueleto Wither/Creeper — ou `PLAYER_HEAD` com textura Base64
-  configurada pelo admin pros demais mobs). O jogador deposita no menu
-  Cabeças ("Depositar Tudo", varre o inventário pela tag do drop); o saldo
-  bancado vira um requisito de rankup normal (`"head:zombie": 50`). Pensado
-  pra integrar com um futuro plugin de spawners.
-- **GUI** — hub principal (`RankMainMenu`, 6 botões: Ranks/Perfil/Rankup/
-  Cabeças/Renascimento/Top) + submenus (lista de ranks, confirmação de
-  rankup/prestígio, perfil, cabeças, kits, top paginado, recompensas de
-  prestígio) — tudo `extends BaseGui`, sem listener de clique próprio (o
-  `GuiListener` único do AlkaCore cuida de tudo).
-- **API pública** (`AlkaRankUpAPI`, via ServicesManager) — `getSellMultiplier(UUID)`
-  pro AlkaShop aplicar o bônus de prestígio na venda.
-- **PlaceholderAPI** — rank/prestígio/progresso/cooldown de kit, ver
-  `hook/RankUpExpansion`.
+![Java](https://img.shields.io/badge/Java-21-orange)
+![Minecraft](https://img.shields.io/badge/Minecraft-1.21.8-green)
+![Version](https://img.shields.io/badge/Version-1.0.19-blue)
+![License](https://img.shields.io/badge/License-Proprietary-red)
 
-## Dependências
+</div>
 
-- **AlkaCore** (hard dependency) — GUI (`BaseGui`/`GuiListener`), banco
-  (`AC#getDatabase()` via `AbstractRepository`), scheduler assíncrono.
-- **AlkaEconomy** — softdepend + hook por reflection (`hook/EconomyHook`,
-  nunca `import com.alkacode.economy.*` direto).
-- **AlkaVips**, **AlkaTime** — softdepend + reflection, mesma convenção
-  (`AlkaVipsHook`, `TimeHook`) — sem eles, os recursos que dependem
-  degradam (ex: `online_time` nunca satisfeito, benefícios de VIP não
-  aplicados) em vez de o plugin desativar.
-- **PlaceholderAPI** — softdepend direto (compileOnly).
+---
 
-## Banco de dados
+## 📋 Sobre o Projeto
 
-Zero JDBC próprio — 4 repositórios (`database/`) sobre o
-`DatabaseProvider` do AlkaCore, mesmo padrão do `AlkaTime.TimeRepository`
-(`CREATE TABLE IF NOT EXISTS` idempotente + `AbstractRepository#upsert`):
-`rankup_players` (rank/prestígio), `alka_kits_cooldowns`,
-`rankup_prestige_rewards_claimed`, `rankup_heads` (banco de cabeças).
+O **AlkaRankUp** é o sistema de progressão por ranks da rede AlkaStudio. Cada
+rank pode exigir uma combinação de moedas, tempo online e itens colecionáveis
+ao mesmo tempo, e ao chegar no topo o jogador pode prestigiar — resetando o
+progresso em troca de vantagens permanentes que acompanham o jogador para
+sempre.
 
-## Limitações conhecidas (v1.0.16)
+## ✨ Funcionalidades Principais
 
-- **Texturas de cabeça**: só os 4 mobs com cabeça vanilla de verdade
-  (Zumbi/Esqueleto/Esqueleto Wither/Creeper) vêm prontos. Qualquer outro
-  mob precisa que o admin cole um valor Base64 real em `heads.types.<MOB>.texture`
-  no `config.yml` — nenhum valor foi inventado.
-- **Depósito de cabeça é um botão, não drag-and-drop**: o `GuiListener`
-  compartilhado do AlkaCore cancela incondicionalmente qualquer clique/drag
-  que toque o inventário do jogador enquanto uma `BaseGui` está aberta, então
-  "arrastar a cabeça pro menu" não é viável sem mudar código compartilhado do
-  Core — o `HeadsMenu` varre o inventário via um botão "Depositar Tudo".
-- **Kits não foram extraídos pra um plugin separado** — cogitado numa rodada
-  anterior de melhorias, mas ficaram dentro do AlkaRankUp mesmo na migração
-  completa pro AlkaCore.
-- Não testado em servidor real ainda — build local (`./gradlew build`)
-  verificado limpo, mas fluxo de jogo/GUI precisa de teste manual.
+| Módulo | Descrição |
+| --- | --- |
+| 🪜 **Ranks multi-requisito** | Cada rank pode exigir moedas do AlkaEconomy, tempo online (via AlkaTime) e/ou cabeças colecionáveis, tudo checado por um motor único. |
+| 👑 **Prestígio** | Reseta o rank para o inicial em troca de grupo de permissão exclusivo, kits periódicos, recompensas únicas por nível, fly liberado e bônus de venda. |
+| 💀 **Cabeças** | Mobs configurados podem dropar uma cabeça colecionável ao morrer; o jogador deposita no banco de cabeças, que vira requisito de rankup. |
+| 🖼️ **GUI completa** | Hub principal com acesso a ranks, perfil, rankup, cabeças, prestígio e ranking — tudo em menus nativos do AlkaCore. |
+| 🏆 **Ranking** | Top de jogadores por progresso, exibido em GUI paginada. |
+| 🔌 **API pública** | `AlkaRankUpAPI` expõe o multiplicador de venda por prestígio para outros plugins (ex.: AlkaShop). |
+| 🔤 **PlaceholderAPI** | Placeholders de rank, prestígio, progresso e cooldown de kit. |
 
-## Origem
+## 🎮 Comandos
 
-Migrado de uma arquitetura 100% própria (SQLite via JDBC cru + GUIs com
-`InventoryHolder`/`Listener` individuais por menu) pro AlkaCore numa única
-tarefa: DB, GUI e o sistema de Cabeças (pedido durante o desenho da nova UI,
-a partir de uma especificação externa que citava um menu "Heads" sem
-contexto do projeto — investigado com o usuário e descoberto ser, de fato,
-uma feature nova de drop-por-mob, não um erro de tradução do menu de Kits).
+| Comando | Descrição | Permissão |
+| --- | --- | --- |
+| `/rankup [kits <rank_id>\|top [quantidade]]` | Abre o menu de rank-up, kits por rank e o ranking | `alkarankup.use` |
+| `/prestige [rewards\|fly]` | Reinicia o progresso no rank máximo por uma vantagem permanente | `alkarankup.use` |
+| `/rankup admin <setrank\|setprestige\|reload>` | Comandos administrativos | `alkarankup.admin` |
+
+Aliases: `/ranks`, `/rank`, `/evoluir` (para `/rankup`).
+
+## 🔗 Integrações
+
+- **AlkaCore** (obrigatória) — GUI, banco de dados e scheduler assíncrono.
+- **AlkaEconomy** — moedas usadas nos requisitos de rank.
+- **AlkaVips** — benefícios de VIP aplicados na progressão.
+- **AlkaTime** — requisito de tempo online.
+- **AlkaShop** — consome o bônus de venda por prestígio via `AlkaRankUpAPI`.
+- **LuckPerms** — troca de grupo por rank/prestígio.
+- **PlaceholderAPI**, **ItemsAdder** — placeholders e ícones de rank.
+
+## 🔧 Tecnologias Utilizadas
+
+- **Java 21** · **Gradle** (com `shadow`)
+- **Paper API 1.21.8**
+- **Adventure/MiniMessage** para mensagens e GUI
+- Repositórios próprios sobre o `DatabaseProvider` do AlkaCore
+
+## ⚙️ Instalação
+
+1. Instale o **AlkaCore** (e o **AlkaEconomy**, se quiser usar moedas nos
+   requisitos) primeiro.
+2. Coloque `AlkaRankUp.jar` na pasta `plugins/` do servidor (Paper **1.21.8+**).
+3. Reinicie o servidor.
+4. Configure ranks, prestígio e cabeças em `config.yml`.
+
+## 🔐 Permissões
+
+| Permissão | Padrão | Descrição |
+| --- | --- | --- |
+| `alkarankup.use` | true | Permite usar `/rankup` e `/prestige` |
+| `alkarankup.admin` | op | Permite comandos administrativos do AlkaRankUp |
+
+## 📝 Licença
+
+> ⚠️ **Projeto proprietário da AlkaStudio.**
+>
+> Código fonte destinado exclusivamente ao uso interno da rede `Alka*`.
+> Reprodução, distribuição ou uso não autorizado não são permitidos.
+
+## 🎯 Créditos
+
+- **Desenvolvido por**: MestreDEV — AlkaStudio
+- **Parte de**: todo o ecossistema `Alka*`
+
+---
+
+<div align="center">
+
+**Desenvolvido com ❤️ pela AlkaStudio**
+
+[![AlkaStudio](https://img.shields.io/badge/AlkaStudio-JLob0-blue)](https://github.com/JLob0)
+
+</div>
