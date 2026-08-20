@@ -29,24 +29,24 @@ import com.alkacode.rankup.manager.PrestigeManager;
 import com.alkacode.rankup.manager.RankManager;
 import com.alkacode.rankup.manager.RankUpService;
 import com.alkacode.rankup.manager.RequirementChecker;
+import com.alkacode.core.plugin.AlkaPlugin;
 import org.bukkit.Bukkit;
 import org.bukkit.NamespacedKey;
 import org.bukkit.plugin.ServicePriority;
-import org.bukkit.plugin.java.JavaPlugin;
 
 import java.util.concurrent.atomic.AtomicReference;
 
-public final class AlkaRankUpPlugin extends JavaPlugin {
+public final class AlkaRankUpPlugin extends AlkaPlugin {
 
     private PlayerDataManager playerDataManager;
     private RankManager rankManager;
 
     @Override
-    public void onEnable() {
+    protected void onPluginEnable() {
         ConfigManager configManager = new ConfigManager(this);
         configManager.load();
 
-        AlkaAPI api = AlkaAPI.get();
+        AlkaAPI api = getAlkaAPI();
         AlkaScheduler scheduler = api.getScheduler();
 
         // AlkaEconomy e AlkaVips agora sao softdepend (nao dependem mais de um plugin
@@ -129,7 +129,7 @@ public final class AlkaRankUpPlugin extends JavaPlugin {
     }
 
     @Override
-    public void onDisable() {
+    protected void onPluginDisable() {
         if (playerDataManager != null) {
             playerDataManager.saveAllSync();
         }
