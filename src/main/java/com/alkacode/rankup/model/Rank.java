@@ -5,7 +5,7 @@ import java.util.Optional;
 
 /**
  * `requirements`: chave -> quantidade necessaria pra ranquear. Cada chave e um id de
- * moeda valido do AlkaEconomy (ex: "coins", "escarion"), OU a chave especial
+ * moeda valido do AlkaEconomy (ex: "gold", "escarion"), OU a chave especial
  * "online_time" (em segundos, checada via AlkaTime - ver RequirementChecker). LinkedHashMap
  * na ordem do config.yml, pra exibir na mesma ordem que o admin escreveu.
  *

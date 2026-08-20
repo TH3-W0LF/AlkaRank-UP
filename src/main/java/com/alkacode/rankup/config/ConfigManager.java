@@ -65,7 +65,7 @@ public final class ConfigManager {
 
         this.prestigeCostGrowth = config.getDouble("economy.prestige-cost-growth", 1.25);
         this.prestigeBaseCost = config.getDouble("economy.prestige-base-cost", 0.0);
-        this.defaultCurrency = config.getString("economy.currency", "coins");
+        this.defaultCurrency = config.getString("economy.currency", "gold");
 
         this.ranks = parseRanks();
         this.prestigeRewards = parsePrestigeRewards();
@@ -198,7 +198,7 @@ public final class ConfigManager {
 
     /**
      * Formato novo: secao `requirements` com uma chave por moeda (ou "online_time",
-     * em segundos) e o valor necessario - ex: {@code requirements: {coins: 30000000,
+     * em segundos) e o valor necessario - ex: {@code requirements: {gold: 30000000,
      * escarion: 20000, online_time: 288000}}. Formato antigo (`cost`+`currency`, um so
      * requisito) continua funcionando como fallback pra nao quebrar config existente.
      */

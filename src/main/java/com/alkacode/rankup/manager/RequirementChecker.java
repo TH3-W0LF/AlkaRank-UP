@@ -136,7 +136,7 @@ public final class RequirementChecker {
         return needSum <= 0 ? 100 : (int) Math.round((haveSum / needSum) * 100);
     }
 
-    /** "30.000.000 coins, 20.000 escarion, 80h online, 50 head:zombie" - pra lore da GUI e mensagens. */
+    /** "30.000.000 gold, 20.000 escarion, 80h online, 50 head:zombie" - pra lore da GUI e mensagens. */
     public String formatSummary(Map<String, Double> requirements) {
         List<String> parts = new ArrayList<>();
         for (Map.Entry<String, Double> entry : requirements.entrySet()) {

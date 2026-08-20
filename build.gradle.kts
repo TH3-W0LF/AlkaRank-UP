@@ -7,7 +7,7 @@ plugins {
 }
 
 group = "com.alkacode"
-version = "1.0.19"
+version = "1.0.20"
 
 java {
     toolchain {
@@ -31,7 +31,7 @@ dependencies {
     // e necessario tambem porque AlkaEconomyPlugin agora estende
     // com.alkacode.core.plugin.AlkaPlugin (o javac precisa da hierarquia completa).
     compileOnly("com.alkacode:AlkaCore:1.0.3")
-    compileOnly("com.alkacode:AlkaEconomy:1.0.5")
+    compileOnly("com.alkacode:AlkaEconomy:1.0.8")
     compileOnly("me.clip:placeholderapi:2.11.6")
     // icone de rank opcional via item/bloco custom do ItemsAdder - mesma versao/padrao
     // ja usado em plugins/AlkaMines (nao existe tag 3.6.4 publicada no jitpack).

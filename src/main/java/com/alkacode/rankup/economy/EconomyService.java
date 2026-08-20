@@ -58,9 +58,9 @@ public final class EconomyService {
         return hook != null ? hook.formatValue(amount) : String.valueOf(amount);
     }
 
-    /** Cai pra "coins" se a moeda configurada nao existir mais no AlkaEconomy (ex: id digitado errado no config.yml). */
+    /** Cai pra "gold" se a moeda configurada nao existir mais no AlkaEconomy (ex: id digitado errado no config.yml). */
     private String resolve(EconomyHook hook, String currency) {
         String id = currency == null ? "" : currency.toLowerCase(Locale.ROOT);
-        return hook.isValidCurrency(id) ? id : "coins";
+        return hook.isValidCurrency(id) ? id : "gold";
     }
 }

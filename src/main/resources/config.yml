@@ -5,18 +5,18 @@
 # ranks e a ordem em que eles aparecem neste arquivo - nao ha campo de ordenacao.
 #
 # Requisitos do rankup: cada rank tem uma secao `requirements`, com uma chave por
-# moeda (qualquer id valido do AlkaEconomy, ex: coins/escarion/nacar/drakonio) e o
+# moeda (qualquer id valido do AlkaEconomy, ex: gold/escarion/nacar/alkarion) e o
 # valor necessario - o jogador precisa cumprir TODOS ao mesmo tempo. A chave especial
 # "online_time" (em SEGUNDOS) exige tempo online, via AlkaTime - ver nota abaixo.
 # O rank inicial nunca cobra nada (todo jogador comeca nele automaticamente).
 # Sugestao: mantenha os valores crescendo de forma exponencial entre os ranks.
 #   requirements:
-#     coins: 30000000
+#     gold: 30000000
 #     escarion: 20000
 #     nacar: 5000
 #     online_time: 288000   # 80h em segundos (80 * 3600)
 #
-# Currency invalida (id que nao existe no AlkaEconomy) cai em "coins" silenciosamente.
+# Currency invalida (id que nao existe no AlkaEconomy) cai em "gold" silenciosamente.
 # "online_time" so funciona com o AlkaTime instalado - sem ele, qualquer rank que exija
 # fica bloqueado com uma mensagem clara em vez de deixar ranquear de graca.
 #
@@ -46,7 +46,7 @@
 economy:
   # moeda padrao (id do AlkaEconomy) usada por qualquer rank sem `currency` proprio,
   # e pelo custo de /prestige.
-  currency: "coins"
+  currency: "gold"
   # custo para executar /prestige quando ja no rank maximo (0 = gratis), crescendo
   # exponencialmente a cada prestigio: prestige-base-cost * prestige-cost-growth^nivel
   prestige-base-cost: 0.0
@@ -251,7 +251,7 @@ ranks:
       material: "COAL"
       custom_model_data: 0
     requirements:
-      coins: 1000
+      gold: 1000
     kits:
       daily:
         name: "<green>Kit Diario Iniciante</green>"
@@ -326,7 +326,7 @@ ranks:
       material: "IRON_INGOT"
       custom_model_data: 0
     requirements:
-      coins: 5000
+      gold: 5000
     kits:
       daily:
         name: "<green>Kit Diario Explorador</green>"
@@ -398,7 +398,7 @@ ranks:
       material: "GOLD_INGOT"
       custom_model_data: 0
     requirements:
-      coins: 15000
+      gold: 15000
     kits:
       daily:
         name: "<green>Kit Diario Guerreiro</green>"
@@ -470,7 +470,7 @@ ranks:
       material: "LAPIS_LAZULI"
       custom_model_data: 0
     requirements:
-      coins: 40000
+      gold: 40000
     kits:
       daily:
         name: "<green>Kit Diario Veterano</green>"
@@ -542,7 +542,7 @@ ranks:
       material: "REDSTONE"
       custom_model_data: 0
     requirements:
-      coins: 100000
+      gold: 100000
     kits:
       daily:
         name: "<green>Kit Diario Cavaleiro</green>"
@@ -614,7 +614,7 @@ ranks:
       material: "EMERALD"
       custom_model_data: 0
     requirements:
-      coins: 250000
+      gold: 250000
     kits:
       daily:
         name: "<green>Kit Diario Campeao</green>"
@@ -686,7 +686,7 @@ ranks:
       material: "DIAMOND"
       custom_model_data: 0
     requirements:
-      coins: 600000
+      gold: 600000
     kits:
       daily:
         name: "<green>Kit Diario Heroi</green>"
@@ -760,7 +760,7 @@ ranks:
     # exemplo de requisito multi-moeda + tempo online (precisa do AlkaTime instalado
     # pra "online_time" funcionar - sem ele, este rank fica bloqueado com aviso claro).
     requirements:
-      coins: 30000000
+      gold: 30000000
       escarion: 20000
       nacar: 5000
       online_time: 288000  # 80h * 3600
@@ -835,7 +835,7 @@ ranks:
       material: "NETHER_STAR"
       custom_model_data: 0
     requirements:
-      coins: 4000000
+      gold: 4000000
     kits:
       daily:
         name: "<green>Kit Diario Lenda</green>"
@@ -907,7 +907,7 @@ ranks:
       material: "BEACON"
       custom_model_data: 0
     requirements:
-      coins: 10000000
+      gold: 10000000
     kits:
       daily:
         name: "<green>Kit Diario Imortal</green>"
