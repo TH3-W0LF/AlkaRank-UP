@@ -22,15 +22,6 @@ import java.util.function.Consumer;
 /** Confirmar/Cancelar centralizado pra ranquear - substitui o clique direto no rank da RankListMenu. */
 public final class RankUpConfirmMenu extends BaseGui {
 
-    private static final String[] LAYOUT = {
-            "GGGGGGGGG",
-            "G_______G",
-            "G___I___G",
-            "G__Y_N__G",
-            "GGGGVGGGG",
-            "GGGGGGGGG",
-    };
-
     private final RankUpServices services;
 
     public RankUpConfirmMenu(Player player, RankUpServices services) {
@@ -40,18 +31,19 @@ public final class RankUpConfirmMenu extends BaseGui {
 
     @Override
     public void render() {
+        String[] layout = services.guiLayoutLoader.getLayout("rankup_confirm").layout();
         Map<Character, ItemStack> icons = new HashMap<>();
         Map<Character, Consumer<InventoryClickEvent>> clicks = new HashMap<>();
-        icons.put('G', createItem(Material.GRAY_STAINED_GLASS_PANE, " "));
-        icons.put('V', createItem(Material.ARROW, services.configManager.rawMessage("gui.back-name"),
-                lore("gui.back-lore")));
+        icons.put('G', createItem(services.configManager.material("rankup_confirm.filler", Material.GRAY_STAINED_GLASS_PANE), " "));
+        icons.put('V', createItem(services.configManager.material("rankup_confirm.back", Material.ARROW),
+                services.configManager.rawMessage("gui.back-name"), lore("gui.back-lore")));
         clicks.put('V', e -> new RankMainMenu(player, services).open());
 
         PlayerRankData data = services.playerDataManager.get(player.getUniqueId());
         if (services.rankManager.isMaxRank(data.rankIndex())) {
-            icons.put('I', createItem(Material.BARRIER, services.configManager.rawMessage("rankup.max-rank"),
-                    lore("gui.rankup-max-rank-lore")));
-            layout(LAYOUT, icons, clicks);
+            icons.put('I', createItem(services.configManager.material("rankup_confirm.locked", Material.BARRIER),
+                    services.configManager.rawMessage("rankup.max-rank"), lore("gui.rankup-max-rank-lore")));
+            layout(layout, icons, clicks);
             return;
         }
 
@@ -78,7 +70,7 @@ public final class RankUpConfirmMenu extends BaseGui {
         info.setItemMeta(meta);
         icons.put('I', info);
 
-        ItemStack confirmItem = new ItemStack(Material.LIME_WOOL);
+        ItemStack confirmItem = new ItemStack(services.configManager.material("rankup_confirm.confirm", Material.LIME_WOOL));
         ItemMeta confirmMeta = confirmItem.getItemMeta();
         confirmMeta.displayName(TextUtil.parse(services.configManager.rawMessage("gui.rankup-confirm-yes-name")));
         confirmMeta.lore(RankListMenu.replacePlaceholders(services.configManager.rawMessageList("gui.rankup-confirm-yes-lore"), placeholders));
@@ -86,11 +78,11 @@ public final class RankUpConfirmMenu extends BaseGui {
         icons.put('Y', confirmItem);
         clicks.put('Y', e -> confirm());
 
-        icons.put('N', createItem(Material.RED_WOOL, services.configManager.rawMessage("gui.rankup-confirm-no-name"),
-                lore("gui.rankup-confirm-no-lore")));
+        icons.put('N', createItem(services.configManager.material("rankup_confirm.cancel", Material.RED_WOOL),
+                services.configManager.rawMessage("gui.rankup-confirm-no-name"), lore("gui.rankup-confirm-no-lore")));
         clicks.put('N', e -> new RankMainMenu(player, services).open());
 
-        layout(LAYOUT, icons, clicks);
+        layout(layout, icons, clicks);
     }
 
     private void confirm() {

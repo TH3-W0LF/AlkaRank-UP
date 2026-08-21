@@ -94,7 +94,8 @@ public final class AlkaRankUpPlugin extends AlkaPlugin {
 
         RankUpServices services = new RankUpServices(this, rankManager, playerDataManager, kitCooldownManager,
                 headsManager, rankUpService, prestigeManager, requirementChecker, configManager, messages,
-                headDropListener.headIdKey(), timeHookRef::get, prestigeRewardsRepository, permissionNames);
+                headDropListener.headIdKey(), timeHookRef::get, prestigeRewardsRepository, permissionNames,
+                new com.alkacode.rankup.gui.layout.GuiLayoutLoader(this));
 
         getCommand("rankup").setExecutor(new RankUpCommand(services));
         getCommand("rankup").setTabCompleter(new RankUpTabCompleter(rankManager));

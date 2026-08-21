@@ -14,12 +14,6 @@ import java.util.Map;
 /** Armazenamento de cabecas - mostra o banco por tipo e deposita tudo que o jogador carrega no inventario. */
 public final class HeadsMenu extends BaseGui {
 
-    private static final int[] CONTENT_SLOTS = {
-            10, 11, 12, 13, 14, 15, 16,
-            19, 20, 21, 22, 23, 24, 25,
-            28, 29, 30, 31, 32, 33, 34,
-    };
-
     private final RankUpServices services;
 
     public HeadsMenu(Player player, RankUpServices services) {
@@ -29,11 +23,13 @@ public final class HeadsMenu extends BaseGui {
 
     @Override
     public void render() {
-        fillBorder(createItem(Material.GRAY_STAINED_GLASS_PANE, " "));
+        var layout = services.guiLayoutLoader.getLayout("rankup_heads");
+        fillBorder(createItem(services.configManager.material("rankup_heads.filler", Material.GRAY_STAINED_GLASS_PANE), " "));
 
+        java.util.List<Integer> contentSlots = layout.findSlots('0');
         int i = 0;
         for (HeadType type : services.configManager.headTypes()) {
-            if (i >= CONTENT_SLOTS.length) {
+            if (i >= contentSlots.size()) {
                 break;
             }
             int banked = services.headsManager.get(player.getUniqueId(), type.id());
@@ -43,16 +39,17 @@ public final class HeadsMenu extends BaseGui {
             ItemStack icon = type.hasTexture()
                     ? headTexture(type.texture(), type.displayName(), lore)
                     : createItem(type.material(), type.displayName(), lore);
-            setItem(CONTENT_SLOTS[i], icon, null);
+            setItem(contentSlots.get(i), icon, null);
             i++;
         }
 
-        setItem(49, createItem(Material.HOPPER, services.configManager.rawMessage("gui.heads-deposit-name"),
+        setItem(layout.firstSlot('D'), createItem(services.configManager.material("rankup_heads.deposit", Material.HOPPER),
+                services.configManager.rawMessage("gui.heads-deposit-name"),
                 services.configManager.rawMessageList("gui.heads-deposit-lore").toArray(new String[0])),
                 e -> depositAll());
 
-        int backSlot = services.configManager.backButtonSlot();
-        setItem(backSlot >= 0 ? backSlot : 45, createItem(Material.ARROW, services.configManager.rawMessage("gui.back-name")),
+        setItem(layout.firstSlot('V'), createItem(services.configManager.material("rankup_heads.back", Material.ARROW),
+                services.configManager.rawMessage("gui.back-name")),
                 e -> new RankMainMenu(player, services).open());
     }
 

@@ -15,32 +15,30 @@ import java.util.Set;
 /** Grade de recompensas UNICAS por nivel de prestigio - cada nivel so pode ser resgatado uma vez (ver PrestigeRewardsRepository). */
 public final class PrestigeRewardsMenu extends BaseGui {
 
-    private static final int FIRST_SLOT = 10;
-
     private final RankUpServices services;
 
     public PrestigeRewardsMenu(Player player, RankUpServices services) {
-        super(services.plugin, player, "<light_purple><b>Recompensas de Prestigio</b></light_purple>", 3, "rankup_prestige_rewards");
+        super(services.plugin, player, services.configManager.rawMessage("gui.prestige-rewards-title"), 3, "rankup_prestige_rewards");
         this.services = services;
     }
 
     @Override
     public void render() {
-        fillBorder(createItem(Material.GRAY_STAINED_GLASS_PANE, " "));
+        var layout = services.guiLayoutLoader.getLayout("rankup_prestige_rewards");
+        fillBorder(createItem(services.configManager.material("rankup_prestige_rewards.filler", Material.GRAY_STAINED_GLASS_PANE), " "));
 
         List<Integer> levels = services.configManager.prestigeRewardLevels();
+        List<Integer> contentSlots = layout.findSlots('0');
         PlayerRankData data = services.playerDataManager.get(player.getUniqueId());
         Set<Integer> claimed = services.prestigeRewardsRepository.loadClaimed(player.getUniqueId());
 
-        int slot = FIRST_SLOT;
-        for (int level : levels) {
-            setItem(slot, buildIcon(level, data.prestigeLevel(), claimed.contains(level)), e -> handleClick(level));
-            slot++;
+        for (int i = 0; i < levels.size() && i < contentSlots.size(); i++) {
+            int level = levels.get(i);
+            setItem(contentSlots.get(i), buildIcon(level, data.prestigeLevel(), claimed.contains(level)), e -> handleClick(level));
         }
 
-        // Slot fixo (nao usa o back_button.slot global) - esse menu tem 27 slots (3 linhas),
-        // o slot global (27) e calibrado pros menus de kit de 36 slots e ficaria fora do range aqui.
-        setItem(22, createItem(Material.ARROW, services.configManager.rawMessage("gui.back-name")),
+        setItem(layout.firstSlot('V'), createItem(services.configManager.material("rankup_prestige_rewards.back", Material.ARROW),
+                services.configManager.rawMessage("gui.back-name")),
                 e -> new RankMainMenu(player, services).open());
     }
 
@@ -68,16 +66,16 @@ public final class PrestigeRewardsMenu extends BaseGui {
     private ItemStack buildIcon(int level, int playerPrestige, boolean claimed) {
         List<KitItem> items = services.configManager.prestigeRewardItems(level);
         Material previewMaterial = items.isEmpty() ? Material.CHEST : items.get(0).material();
+        String name = services.configManager.rawMessage("gui.prestige-rewards-name").replace("<level>", String.valueOf(level));
 
         if (claimed) {
-            return createItem(Material.LIME_STAINED_GLASS_PANE, "<light_purple><b>Prestigio " + level + "</b></light_purple>",
-                    "<green>Ja resgatado.");
+            return createItem(services.configManager.material("rankup_prestige_rewards.claimed", Material.LIME_STAINED_GLASS_PANE),
+                    name, services.configManager.rawMessage("gui.prestige-rewards-claimed-lore"));
         }
         if (playerPrestige >= level) {
-            return createItem(previewMaterial, "<light_purple><b>Prestigio " + level + "</b></light_purple>",
-                    "<yellow>Clique para resgatar!");
+            return createItem(previewMaterial, name, services.configManager.rawMessage("gui.prestige-rewards-available-lore"));
         }
-        return createItem(Material.BARRIER, "<light_purple><b>Prestigio " + level + "</b></light_purple>",
-                "<red>Alcance o Prestigio " + level + " primeiro.");
+        return createItem(services.configManager.material("rankup_prestige_rewards.locked", Material.BARRIER), name,
+                services.configManager.rawMessage("gui.prestige-rewards-locked-lore").replace("<level>", String.valueOf(level)));
     }
 }

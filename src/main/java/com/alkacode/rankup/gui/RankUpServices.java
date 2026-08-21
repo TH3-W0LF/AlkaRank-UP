@@ -2,6 +2,7 @@ package com.alkacode.rankup.gui;
 
 import com.alkacode.rankup.config.ConfigManager;
 import com.alkacode.rankup.config.Messages;
+import com.alkacode.rankup.gui.layout.GuiLayoutLoader;
 import com.alkacode.rankup.database.PrestigeRewardsRepository;
 import com.alkacode.rankup.manager.HeadsManager;
 import com.alkacode.rankup.manager.KitCooldownManager;
@@ -33,13 +34,14 @@ public final class RankUpServices {
     public final Supplier<TimeHook> timeHookSupplier;
     public final PrestigeRewardsRepository prestigeRewardsRepository;
     public final com.alkacode.core.util.PermissionNamesStore permissionNames;
+    public final GuiLayoutLoader guiLayoutLoader;
 
     public RankUpServices(JavaPlugin plugin, RankManager rankManager, PlayerDataManager playerDataManager,
                            KitCooldownManager kitCooldownManager, HeadsManager headsManager, RankUpService rankUpService,
                            PrestigeManager prestigeManager, RequirementChecker requirementChecker,
                            ConfigManager configManager, Messages messages, NamespacedKey headIdKey,
                            Supplier<TimeHook> timeHookSupplier, PrestigeRewardsRepository prestigeRewardsRepository,
-                           com.alkacode.core.util.PermissionNamesStore permissionNames) {
+                           com.alkacode.core.util.PermissionNamesStore permissionNames, GuiLayoutLoader guiLayoutLoader) {
         this.plugin = plugin;
         this.rankManager = rankManager;
         this.playerDataManager = playerDataManager;
@@ -54,6 +56,7 @@ public final class RankUpServices {
         this.timeHookSupplier = timeHookSupplier;
         this.prestigeRewardsRepository = prestigeRewardsRepository;
         this.permissionNames = permissionNames;
+        this.guiLayoutLoader = guiLayoutLoader;
     }
 
     /** Linhas de lore "permissoes deste rank" ja resolvidas com nomes amigaveis - vazio se

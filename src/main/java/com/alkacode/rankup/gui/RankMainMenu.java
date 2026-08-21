@@ -14,15 +14,6 @@ import java.util.function.Consumer;
 /** Hub principal do /rankup - so navegacao, nenhuma transacao acontece aqui. */
 public final class RankMainMenu extends BaseGui {
 
-    private static final String[] LAYOUT = {
-            "GGGGGGGGG",
-            "G_______G",
-            "G_H_R_P_G",
-            "G_T_U_N_G",
-            "G_______G",
-            "GGGGGGGGG",
-    };
-
     private final RankUpServices services;
 
     public RankMainMenu(Player player, RankUpServices services) {
@@ -38,28 +29,29 @@ public final class RankMainMenu extends BaseGui {
         Map<Character, ItemStack> icons = new HashMap<>();
         Map<Character, Consumer<InventoryClickEvent>> clicks = new HashMap<>();
 
-        icons.put('G', createItem(Material.GRAY_STAINED_GLASS_PANE, " "));
+        icons.put('G', createItem(services.configManager.material("rankup_main.filler", Material.GRAY_STAINED_GLASS_PANE), " "));
 
-        icons.put('H', createItem(Material.SKELETON_SKULL, services.configManager.rawMessage("gui.main-heads-name"),
-                lore("gui.main-heads-lore")));
+        icons.put('H', createItem(services.configManager.material("rankup_main.heads", Material.SKELETON_SKULL),
+                services.configManager.rawMessage("gui.main-heads-name"), lore("gui.main-heads-lore")));
         clicks.put('H', e -> new HeadsMenu(player, services).open());
 
-        icons.put('R', createItem(Material.BOOK, services.configManager.rawMessage("gui.main-ranks-name"),
-                lore("gui.main-ranks-lore")));
+        icons.put('R', createItem(services.configManager.material("rankup_main.ranks", Material.BOOK),
+                services.configManager.rawMessage("gui.main-ranks-name"), lore("gui.main-ranks-lore")));
         clicks.put('R', e -> new RankListMenu(player, services).open());
 
-        icons.put('P', createItem(Material.PLAYER_HEAD, services.configManager.rawMessage("gui.main-profile-name"),
-                lore("gui.main-profile-lore")));
+        icons.put('P', createItem(services.configManager.material("rankup_main.profile", Material.PLAYER_HEAD),
+                services.configManager.rawMessage("gui.main-profile-name"), lore("gui.main-profile-lore")));
         clicks.put('P', e -> new ProfileMenu(player, services).open());
 
-        icons.put('T', createItem(Material.GOLD_BLOCK, services.configManager.rawMessage("gui.main-top-name"),
-                lore("gui.main-top-lore")));
+        icons.put('T', createItem(services.configManager.material("rankup_main.top", Material.GOLD_BLOCK),
+                services.configManager.rawMessage("gui.main-top-name"), lore("gui.main-top-lore")));
         clicks.put('T', e -> new TopMenu(player, services).open());
 
-        icons.put('U', createItem(Material.EXPERIENCE_BOTTLE, services.configManager.rawMessage("gui.main-rankup-name"),
-                lore("gui.main-rankup-lore")));
+        icons.put('U', createItem(services.configManager.material("rankup_main.rankup", Material.EXPERIENCE_BOTTLE),
+                services.configManager.rawMessage("gui.main-rankup-name"), lore("gui.main-rankup-lore")));
         clicks.put('U', e -> new RankUpConfirmMenu(player, services).open());
 
+        // Icone de prestigio muda conforme elegibilidade (max rank ou nao) - permanece dinamico em Java.
         icons.put('N', createItem(maxRank ? Material.NETHER_STAR : Material.GRAY_DYE,
                 services.configManager.rawMessage("gui.main-prestige-name"), lore("gui.main-prestige-lore")));
         clicks.put('N', e -> {
@@ -70,7 +62,7 @@ public final class RankMainMenu extends BaseGui {
             }
         });
 
-        layout(LAYOUT, icons, clicks);
+        layout(services.guiLayoutLoader.getLayout("rankup_main").layout(), icons, clicks);
     }
 
     private String[] lore(String path) {

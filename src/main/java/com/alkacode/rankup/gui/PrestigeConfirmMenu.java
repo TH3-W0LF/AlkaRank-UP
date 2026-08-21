@@ -33,21 +33,18 @@ public final class PrestigeConfirmMenu extends BaseGui {
 
     @Override
     public void render() {
-        fillBorder(createItem(Material.GRAY_STAINED_GLASS_PANE, " "));
-
-        ConfigurationSection section = services.configManager.prestigeConfirmSection();
-        if (section == null) {
-            return;
-        }
+        var layout = services.guiLayoutLoader.getLayout("rankup_prestige_confirm");
+        fillBorder(createItem(services.configManager.material("rankup_prestige_confirm.filler", Material.GRAY_STAINED_GLASS_PANE), " "));
 
         PlayerRankData data = services.playerDataManager.get(player.getUniqueId());
         double cost = services.prestigeManager.previewCost(player);
         int nextPrestige = data.prestigeLevel() + 1;
         double bonusPerLevel = services.configManager.sellBonusPerPrestige();
 
-        int infoSlot = section.getInt("info-slot", -1);
+        int infoSlot = layout.firstSlot('I');
         if (infoSlot >= 0) {
-            setItem(infoSlot, createItem(Material.NETHER_STAR, services.configManager.rawMessage("gui.prestige-confirm-info-name"),
+            setItem(infoSlot, createItem(services.configManager.material("rankup_prestige_confirm.info", Material.NETHER_STAR),
+                    services.configManager.rawMessage("gui.prestige-confirm-info-name"),
                     services.configManager.rawMessageList("gui.prestige-confirm-info-lore").stream()
                             .map(line -> line.replace("<cost>", String.valueOf(Math.round(cost)))
                                     .replace("<prestige>", String.valueOf(nextPrestige))
@@ -59,15 +56,17 @@ public final class PrestigeConfirmMenu extends BaseGui {
                             .toArray(String[]::new)));
         }
 
-        int confirmSlot = section.getInt("confirm-slot", -1);
+        int confirmSlot = layout.firstSlot('Y');
         if (confirmSlot >= 0) {
-            setItem(confirmSlot, createItem(Material.LIME_WOOL, services.configManager.rawMessage("gui.prestige-confirm-yes")),
+            setItem(confirmSlot, createItem(services.configManager.material("rankup_prestige_confirm.confirm", Material.LIME_WOOL),
+                    services.configManager.rawMessage("gui.prestige-confirm-yes")),
                     e -> confirm());
         }
 
-        int cancelSlot = section.getInt("cancel-slot", -1);
+        int cancelSlot = layout.firstSlot('N');
         if (cancelSlot >= 0) {
-            setItem(cancelSlot, createItem(Material.RED_WOOL, services.configManager.rawMessage("gui.prestige-confirm-no")),
+            setItem(cancelSlot, createItem(services.configManager.material("rankup_prestige_confirm.cancel", Material.RED_WOOL),
+                    services.configManager.rawMessage("gui.prestige-confirm-no")),
                     e -> new RankMainMenu(player, services).open());
         }
     }

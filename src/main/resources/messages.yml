@@ -223,6 +223,13 @@ gui:
   prestige-confirm-reward-no: "<gray>nenhuma configurada pra este nível"
   prestige-confirm-yes: "<green><b>CONFIRMAR</b>"
   prestige-confirm-no: "<red><b>CANCELAR</b>"
+  prestige-rewards-title: "<light_purple><b>Recompensas de Prestigio</b></light_purple>"
+  # placeholders: <level>
+  prestige-rewards-name: "<light_purple><b>Prestigio <level></b></light_purple>"
+  prestige-rewards-claimed-lore: "<green>Já resgatado."
+  prestige-rewards-available-lore: "<yellow>Clique para resgatar!"
+  # placeholders: <level>
+  prestige-rewards-locked-lore: "<red>Alcance o Prestígio <level> primeiro."
   info-name: "<gold><b>Seu progresso</b>"
   # placeholders: <rank>, <prestige>
   info-lore:

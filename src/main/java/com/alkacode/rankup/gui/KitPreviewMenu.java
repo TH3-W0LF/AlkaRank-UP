@@ -11,7 +11,6 @@ import com.alkacode.rankup.util.TextUtil;
 import com.alkacode.rankup.util.TimeUtil;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -50,22 +49,23 @@ public final class KitPreviewMenu extends BaseGui {
             return;
         }
         Kit kit = kitOpt.get();
-        ConfigurationSection gui = services.configManager.kitPreviewSection();
+        var layout = services.guiLayoutLoader.getLayout("rankup_kit_preview");
 
-        List<Integer> itemSlots = gui.getIntegerList("item-slots");
+        List<Integer> itemSlots = layout.findSlots('0');
         List<KitItem> items = kit.items();
         for (int i = 0; i < items.size() && i < itemSlots.size(); i++) {
             setItem(itemSlots.get(i), KitItemFactory.build(items.get(i)));
         }
 
-        int actionSlot = services.configManager.claimButtonSlot();
+        int actionSlot = layout.firstSlot('C');
         if (actionSlot >= 0) {
             setItem(actionSlot, buildActionItem(kit), e -> handleClaim(kit));
         }
 
-        int backSlot = services.configManager.backButtonSlot();
+        int backSlot = layout.firstSlot('V');
         if (backSlot >= 0) {
-            setItem(backSlot, createItem(Material.ARROW, services.configManager.rawMessage("gui.back-name")),
+            setItem(backSlot, createItem(services.configManager.material("rankup_kit_preview.back", Material.ARROW),
+                    services.configManager.rawMessage("gui.back-name")),
                     e -> new KitMenu(player, services, rankId).open());
         }
 

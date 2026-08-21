@@ -1,0 +1,110 @@
+# AlkaRankUp - Layouts de GUI (posicao dos slots, editavel sem recompilar)
+# Regras:
+#   # = filler/borda (icone comum, ver menus.yml <id>.filler)
+#   _ = vazio (nunca preenchido)
+#   Letras = slots controlados pelo Java (conteudo/acao fixa)
+#   0/1-9/a-e = slots de lista dinamica (ordem = ordem de leitura do grid, esquerda->direita, cima->baixo)
+# Texto (nome/lore) continua em messages.yml (ja era 100% YML antes deste retrofit,
+# so o material e a posicao dos slots estavam hardcoded em Java) - ver nota no topo do menus.yml.
+
+rankup_main:
+  rows: 6
+  layout:
+    - "GGGGGGGGG"
+    - "G_______G"
+    - "G_H_R_P_G"
+    - "G_T_U_N_G"
+    - "G_______G"
+    - "GGGGGGGGG"
+  # H=cabecas, R=ranks, P=perfil, T=top, U=rankup, N=prestigio (icone dinamico, fica em Java)
+
+rankup_heads:
+  rows: 6
+  layout:
+    - "#########"
+    - "#0000000#"
+    - "#0000000#"
+    - "#0000000#"
+    - "#_______#"
+    - "V###D####"
+  # 0=tipo de cabeca (dinamico, ordem de configManager.headTypes()), V=voltar, D=depositar
+
+rankup_top:
+  rows: 6
+  layout:
+    - "#########"
+    - "#0000000#"
+    - "#_______#"
+    - "#_______#"
+    - "#_______#"
+    - "###AVN###"
+  # 0=jogador do ranking (dinamico), A=anterior, V=voltar, N=proxima
+
+rankup_kits:
+  rows: 4
+  layout:
+    - "_________"
+    - "__D_W_M__"
+    - "_________"
+    - "V________"
+  # D=kit diario, W=kit semanal, M=kit mensal (icone dinamico - disponivel/cooldown), V=voltar
+  # slots vinham antes de gui.kits-menu.daily-slot/weekly-slot/monthly-slot em config.yml (agora aqui)
+
+rankup_kit_preview:
+  rows: 4
+  layout:
+    - "_________"
+    - "_0000000_"
+    - "_________"
+    - "V___C____"
+  # 0=item do kit (dinamico, ordem = kit.items()), V=voltar, C=acao (resgatar/cooldown -
+  # icone vem de gui_settings.claim_button/cooldown_button em config.yml, ja era YML)
+  # slots vinham antes de gui.kit-preview.item-slots em config.yml (agora aqui)
+
+rankup_prestige_rewards:
+  rows: 3
+  layout:
+    - "#########"
+    - "#0000000#"
+    - "####V####"
+  # 0=recompensa por nivel de prestigio (dinamico, ordem = configManager.prestigeRewardLevels()), V=voltar
+
+rankup_prestige_confirm:
+  rows: 3
+  layout:
+    - "#########"
+    - "#_Y_I_N_#"
+    - "#########"
+  # Y=confirmar, I=info, N=cancelar
+  # slots vinham antes de gui.prestige-confirm.confirm-slot/info-slot/cancel-slot em config.yml (agora aqui)
+
+rankup_profile:
+  rows: 3
+  layout:
+    - "#########"
+    - "#RXPHTSK#"
+    - "####V####"
+  # R=rank atual, X=proximo rank (ou max-rank), P=prestigio, H=cabeca do jogador,
+  # T=tempo online, S=cabecas coletadas, K=kits disponiveis, V=voltar
+
+rankup_confirm:
+  rows: 6
+  layout:
+    - "GGGGGGGGG"
+    - "G_______G"
+    - "G___I___G"
+    - "G__Y_N__G"
+    - "GGGGVGGGG"
+    - "GGGGGGGGG"
+  # I=info do proximo rank (dinamico, ou barrier se max-rank), Y=confirmar, N=cancelar, V=voltar
+
+rankup_list:
+  rows: 6
+  layout:
+    - "GGGGGGGGG"
+    - "G1234567G"
+    - "G89abcdeG"
+    - "G_______G"
+    - "GGGGVGGGG"
+    - "GGGGGGGGG"
+  # 1-9,a-e=ranks (dinamico, icone por rank - ver RankListMenu.MAX_RANKS=14), V=voltar

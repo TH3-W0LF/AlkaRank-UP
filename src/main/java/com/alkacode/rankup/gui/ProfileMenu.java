@@ -31,13 +31,14 @@ public final class ProfileMenu extends BaseGui {
 
     @Override
     public void render() {
-        fillBorder(createItem(Material.GRAY_STAINED_GLASS_PANE, " "));
+        var layout = services.guiLayoutLoader.getLayout("rankup_profile");
+        fillBorder(createItem(services.configManager.material("rankup_profile.filler", Material.GRAY_STAINED_GLASS_PANE), " "));
 
         PlayerRankData data = services.playerDataManager.get(player.getUniqueId());
         Rank current = services.rankManager.rankAt(data.rankIndex());
         boolean maxRank = services.rankManager.isMaxRank(data.rankIndex());
 
-        setItem(10, item(current.icon(), "gui.profile-rank-name", "gui.profile-rank-lore",
+        setItem(layout.firstSlot('R'), item(current.icon(), "gui.profile-rank-name", "gui.profile-rank-lore",
                 Map.of("<rank>", current.displayName())));
 
         if (!maxRank) {
@@ -46,33 +47,34 @@ public final class ProfileMenu extends BaseGui {
             ph.put("<next_rank>", next.displayName());
             ph.put("<cost>", services.requirementChecker.formatSummary(next.requirements()));
             ph.put("<progress>", RankListMenu.progressBar(services.requirementChecker.progressPercent(player, next.requirements())));
-            setItem(11, item(next.icon(), "gui.profile-next-name", "gui.profile-next-lore", ph));
+            setItem(layout.firstSlot('X'), item(next.icon(), "gui.profile-next-name", "gui.profile-next-lore", ph));
         } else {
-            setItem(11, item(Material.NETHER_STAR, "gui.profile-maxrank-name", "gui.profile-maxrank-lore", Map.of()));
+            setItem(layout.firstSlot('X'), item(Material.NETHER_STAR, "gui.profile-maxrank-name", "gui.profile-maxrank-lore", Map.of()));
         }
 
-        setItem(12, item(Material.END_CRYSTAL, "gui.profile-prestige-name", "gui.profile-prestige-lore",
+        setItem(layout.firstSlot('P'), item(services.configManager.material("rankup_profile.prestige", Material.END_CRYSTAL),
+                "gui.profile-prestige-name", "gui.profile-prestige-lore",
                 Map.of("<prestige>", String.valueOf(data.prestigeLevel()))));
 
-        setItem(13, playerHead());
+        setItem(layout.firstSlot('H'), playerHead());
 
         TimeHook timeHook = services.timeHookSupplier.get();
         long onlineSeconds = timeHook != null ? timeHook.getOnlineSeconds(player.getUniqueId()) : -1;
         String onlineText = onlineSeconds >= 0 ? TimeUtil.formatDuration(onlineSeconds)
                 : services.configManager.rawMessage("gui.profile-time-unavailable");
-        setItem(14, item(Material.CLOCK, "gui.profile-time-name", "gui.profile-time-lore", Map.of("<time>", onlineText)));
+        setItem(layout.firstSlot('T'), item(services.configManager.material("rankup_profile.time", Material.CLOCK),
+                "gui.profile-time-name", "gui.profile-time-lore", Map.of("<time>", onlineText)));
 
         int headsTotal = services.headsManager.all(player.getUniqueId()).values().stream()
                 .mapToInt(Integer::intValue).sum();
-        setItem(15, item(Material.SKELETON_SKULL, "gui.profile-heads-name", "gui.profile-heads-lore",
-                Map.of("<heads>", String.valueOf(headsTotal))));
+        setItem(layout.firstSlot('S'), item(services.configManager.material("rankup_profile.heads", Material.SKELETON_SKULL),
+                "gui.profile-heads-name", "gui.profile-heads-lore", Map.of("<heads>", String.valueOf(headsTotal))));
 
-        setItem(16, item(Material.CHEST, "gui.profile-kits-name", "gui.profile-kits-lore",
-                Map.of("<kits>", String.valueOf(countAvailableKits(current)))));
+        setItem(layout.firstSlot('K'), item(services.configManager.material("rankup_profile.kits", Material.CHEST),
+                "gui.profile-kits-name", "gui.profile-kits-lore", Map.of("<kits>", String.valueOf(countAvailableKits(current)))));
 
-        // Slot fixo (nao usa o back_button.slot global) - esse menu tem 27 slots (3 linhas),
-        // o slot global (27) e calibrado pros menus de kit de 36 slots e ficaria fora do range aqui.
-        setItem(22, createItem(Material.ARROW, services.configManager.rawMessage("gui.back-name")),
+        setItem(layout.firstSlot('V'), createItem(services.configManager.material("rankup_profile.back", Material.ARROW),
+                services.configManager.rawMessage("gui.back-name")),
                 e -> new RankMainMenu(player, services).open());
     }
 

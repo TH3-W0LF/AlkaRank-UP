@@ -27,15 +27,6 @@ public final class RankListMenu extends BaseGui {
      * do que isso (os excedentes simplesmente nao aparecem na grade). */
     public static final int MAX_RANKS = 14;
 
-    private static final String[] LAYOUT = {
-            "GGGGGGGGG",
-            "G1234567G",
-            "G89abcdeG",
-            "G_______G",
-            "GGGGVGGGG",
-            "GGGGGGGGG",
-    };
-
     private static final char[] RANK_SLOTS = {'1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e'};
 
     private final RankUpServices services;
@@ -53,9 +44,9 @@ public final class RankListMenu extends BaseGui {
         Map<Character, ItemStack> icons = new HashMap<>();
         Map<Character, Consumer<InventoryClickEvent>> clicks = new HashMap<>();
 
-        icons.put('G', createItem(Material.GRAY_STAINED_GLASS_PANE, " "));
-        icons.put('V', createItem(Material.ARROW, services.configManager.rawMessage("gui.back-name"),
-                lore("gui.back-lore")));
+        icons.put('G', createItem(services.configManager.material("rankup_list.filler", Material.GRAY_STAINED_GLASS_PANE), " "));
+        icons.put('V', createItem(services.configManager.material("rankup_list.back", Material.ARROW),
+                services.configManager.rawMessage("gui.back-name"), lore("gui.back-lore")));
         clicks.put('V', e -> new RankMainMenu(player, services).open());
 
         for (int i = 0; i < RANK_SLOTS.length && i < ranks.size(); i++) {
@@ -65,7 +56,7 @@ public final class RankListMenu extends BaseGui {
             clicks.put(c, e -> handleClick(rank, data));
         }
 
-        layout(LAYOUT, icons, clicks);
+        layout(services.guiLayoutLoader.getLayout("rankup_list").layout(), icons, clicks);
     }
 
     private void handleClick(Rank rank, PlayerRankData data) {

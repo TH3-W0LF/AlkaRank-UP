@@ -36,6 +36,7 @@ public final class ConfigManager {
 
     private FileConfiguration config;
     private FileConfiguration messages;
+    private FileConfiguration menus;
 
     private List<Rank> ranks;
     private double prestigeBaseCost;
@@ -62,6 +63,7 @@ public final class ConfigManager {
         config.options().copyDefaults(true);
         plugin.saveConfig();
         messages = loadMessages();
+        menus = loadMenus();
 
         this.prestigeCostGrowth = config.getDouble("economy.prestige-cost-growth", 1.25);
         this.prestigeBaseCost = config.getDouble("economy.prestige-base-cost", 0.0);
@@ -94,6 +96,35 @@ public final class ConfigManager {
             plugin.getLogger().log(Level.WARNING, "Falha ao carregar defaults de messages.yml", e);
         }
         return loaded;
+    }
+
+    /** menus.yml (material dos icones estaticos de GUI - ver R8 no CLAUDE.md, retrofit
+     * feito em cima de messages.yml que ja tinha nome/lore). Mesmo padrao merge-de-defaults
+     * do loadMessages() acima. */
+    private FileConfiguration loadMenus() {
+        File file = new File(plugin.getDataFolder(), "menus.yml");
+        if (!file.exists()) {
+            plugin.saveResource("menus.yml", false);
+        }
+        YamlConfiguration loaded = YamlConfiguration.loadConfiguration(file);
+        try (InputStream defaultStream = plugin.getResource("menus.yml")) {
+            if (defaultStream != null) {
+                loaded.setDefaults(YamlConfiguration.loadConfiguration(
+                        new InputStreamReader(defaultStream, StandardCharsets.UTF_8)));
+                loaded.options().copyDefaults(true);
+                loaded.save(file);
+            }
+        } catch (IOException e) {
+            plugin.getLogger().log(Level.WARNING, "Falha ao carregar defaults de menus.yml", e);
+        }
+        return loaded;
+    }
+
+    /** Material de menus.yml.<path>.material (icone estatico de GUI) - ver gui-layouts.yml
+     * pra posicao do slot correspondente. */
+    public Material material(String path, Material fallback) {
+        Material material = Material.matchMaterial(menus.getString(path + ".material", ""));
+        return material != null ? material : fallback;
     }
 
     /**

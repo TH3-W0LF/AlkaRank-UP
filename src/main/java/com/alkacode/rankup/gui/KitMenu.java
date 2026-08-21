@@ -7,7 +7,6 @@ import com.alkacode.rankup.model.Rank;
 import com.alkacode.rankup.util.TextUtil;
 import com.alkacode.rankup.util.TimeUtil;
 import org.bukkit.Material;
-import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -40,10 +39,10 @@ public final class KitMenu extends BaseGui {
             return;
         }
         Rank rank = rankOpt.get();
-        ConfigurationSection gui = services.configManager.kitsMenuSection();
+        var layout = services.guiLayoutLoader.getLayout("rankup_kits");
 
         for (KitType type : KitType.values()) {
-            int slot = gui.getInt(type.name().toLowerCase() + "-slot", -1);
+            int slot = layout.firstSlot(kitTypeChar(type));
             if (slot < 0) {
                 continue;
             }
@@ -51,9 +50,10 @@ public final class KitMenu extends BaseGui {
                     e -> new KitPreviewMenu(player, services, rank.id(), type).open()));
         }
 
-        int backSlot = services.configManager.backButtonSlot();
+        int backSlot = layout.firstSlot('V');
         if (backSlot >= 0) {
-            setItem(backSlot, createItem(Material.ARROW, services.configManager.rawMessage("gui.back-name")),
+            setItem(backSlot, createItem(services.configManager.material("rankup_kits.back", Material.ARROW),
+                    services.configManager.rawMessage("gui.back-name")),
                     e -> new RankListMenu(player, services).open());
         }
 
@@ -61,6 +61,14 @@ public final class KitMenu extends BaseGui {
             var icon = services.configManager.fillEmptySlotsIcon();
             fill(createItem(icon.material(), icon.displayName() != null ? icon.displayName() : " "));
         }
+    }
+
+    private static char kitTypeChar(KitType type) {
+        return switch (type) {
+            case DAILY -> 'D';
+            case WEEKLY -> 'W';
+            case MONTHLY -> 'M';
+        };
     }
 
     private ItemStack buildKitItem(Rank rank, Kit kit) {

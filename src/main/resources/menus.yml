@@ -1,0 +1,95 @@
+# AlkaRankUp - menus.yml
+# Nome/lore de todas as GUIs ja vivem em messages.yml (chaves "gui.*") desde antes deste
+# retrofit R8 - ja eram 100% editaveis sem recompilar, so o MATERIAL do icone e a POSICAO
+# do slot (agora em gui-layouts.yml) estavam hardcoded em Java. Este arquivo cobre só o
+# material dos icones estaticos (decoracao/botoes); icones dinamicos (rank/kit/cabeca por
+# tipo, que ja tem seu proprio material configuravel em outro lugar) continuam montados em
+# Java. Chave = <id-do-layout>.<chave>.material, casada com a letra usada em gui-layouts.yml.
+
+rankup_main:
+  filler:
+    material: GRAY_STAINED_GLASS_PANE
+  heads:
+    material: SKELETON_SKULL
+  ranks:
+    material: BOOK
+  profile:
+    material: PLAYER_HEAD
+  top:
+    material: GOLD_BLOCK
+  rankup:
+    material: EXPERIENCE_BOTTLE
+
+rankup_heads:
+  filler:
+    material: GRAY_STAINED_GLASS_PANE
+  back:
+    material: ARROW
+  deposit:
+    material: HOPPER
+
+rankup_top:
+  filler:
+    material: GRAY_STAINED_GLASS_PANE
+  previous:
+    material: ARROW
+  back:
+    material: ARROW
+  next:
+    material: ARROW
+
+rankup_kits:
+  back:
+    material: ARROW
+
+rankup_kit_preview:
+  back:
+    material: ARROW
+
+rankup_prestige_rewards:
+  filler:
+    material: GRAY_STAINED_GLASS_PANE
+  back:
+    material: ARROW
+  claimed:
+    material: LIME_STAINED_GLASS_PANE
+  locked:
+    material: BARRIER
+
+rankup_prestige_confirm:
+  filler:
+    material: GRAY_STAINED_GLASS_PANE
+  info:
+    material: NETHER_STAR
+  confirm:
+    material: LIME_WOOL
+  cancel:
+    material: RED_WOOL
+
+rankup_profile:
+  filler:
+    material: GRAY_STAINED_GLASS_PANE
+  prestige:
+    material: END_CRYSTAL
+  time:
+    material: CLOCK
+  heads:
+    material: SKELETON_SKULL
+  kits:
+    material: CHEST
+  back:
+    material: ARROW
+
+rankup_confirm:
+  filler:
+    material: GRAY_STAINED_GLASS_PANE
+  confirm:
+    material: LIME_WOOL
+  cancel:
+    material: RED_WOOL
+  locked:
+    material: BARRIER
+
+rankup_list:
+  filler:
+    material: GRAY_STAINED_GLASS_PANE
